@@ -1,40 +1,367 @@
-MIT License
+================================================================================
+EOCS ANALYTICS SOFTWARE LICENSE AGREEMENT
+================================================================================
 
-Copyright (c) 2025-2026 Episodes of Care Solutions, LLC
+COMMERCIAL LICENSE - Version 1.0
+Effective Date: January 2026
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
+This Software License Agreement ("Agreement") is a legal agreement between you 
+(either an individual or entity, "Licensee" or "You") and Episodes of Care 
+Solutions, LLC ("EOCS," "Licensor," "We," or "Us") for the use of the EOCS 
+Analytics software package ("Software").
 
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
+BY INSTALLING, COPYING, OR OTHERWISE USING THE SOFTWARE, YOU AGREE TO BE BOUND 
+BY THE TERMS OF THIS AGREEMENT. IF YOU DO NOT AGREE TO THESE TERMS, DO NOT 
+INSTALL OR USE THE SOFTWARE.
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
+================================================================================
+1. DEFINITIONS
+================================================================================
 
----
+"Software" means the EOCS Analytics code package, including:
+  - dbt (data build tool) transformation models
+  - SQL query libraries
+  - Documentation and data dictionaries
+  - Synthetic test data
+  - Configuration templates
+  - All updates provided under active maintenance
 
-AHRQ Data Attribution:
+"Authorized Environment" means Licensee's own data infrastructure (Snowflake, 
+PostgreSQL, SQL Server, BigQuery, Redshift, or other supported databases) 
+where the Software is deployed.
 
-This package includes reference data derived from the Agency for Healthcare 
-Research and Quality (AHRQ) Healthcare Cost and Utilization Project (HCUP) 
-Elixhauser Comorbidity Software, version 2026.1.
+"PACES" means the Patient-centered Episodes of Care Stratified by risk episode 
+grouper, licensed separately from PACES Inc.
 
-AHRQ HCUP data and tools are provided for public use. For more information:
-https://hcup-us.ahrq.gov/toolssoftware/comorbidityicd10/comorbidity_icd10.jsp
+"License Fee" means the fees set forth in Schedule A attached hereto, as may 
+be amended from time to time.
 
----
+================================================================================
+2. GRANT OF LICENSE
+================================================================================
 
-For questions about this software:
+2.1 LICENSE GRANT
+Subject to payment of the applicable License Fee and compliance with this 
+Agreement, EOCS grants Licensee a non-exclusive, non-transferable license to:
+
+  (a) Install and use the Software in Licensee's Authorized Environment;
+  (b) Execute the Software against Licensee's data;
+  (c) Modify the Software for Licensee's internal business purposes;
+  (d) Create derivative works based on the Software for internal use only;
+  (e) Make reasonable backup copies of the Software.
+
+2.2 LICENSE TYPES
+
+  PERPETUAL LICENSE: A one-time payment granting indefinite use of the 
+  Software version delivered. Updates require active Maintenance Agreement.
+
+  ANNUAL LICENSE: An annual payment granting use of the Software including 
+  all updates and priority support for the license term.
+
+  PACES PARTNER LICENSE: A master license permitting authorized deployment 
+  to Licensee's clients, subject to separate Partner Agreement terms.
+
+================================================================================
+3. RESTRICTIONS
+================================================================================
+
+Licensee SHALL NOT:
+
+  (a) Distribute, sublicense, sell, or transfer the Software to third parties 
+      without prior written consent from EOCS;
+  
+  (b) Use the Software to provide a hosted service, SaaS offering, or 
+      bureau service to third parties without a PACES Partner License;
+  
+  (c) Remove or alter any copyright, trademark, or proprietary notices;
+  
+  (d) Reverse engineer, decompile, or disassemble the Software except as 
+      permitted by applicable law;
+  
+  (e) Use the Software in a manner that competes directly with EOCS products 
+      or services;
+  
+  (f) Represent modified versions as the original EOCS Analytics product.
+
+================================================================================
+4. DATA SOVEREIGNTY AND PRIVACY
+================================================================================
+
+4.1 YOUR DATA, YOUR CONTROL
+The Software is designed to run entirely within Licensee's Authorized 
+Environment. EOCS does NOT:
+
+  - Host, store, process, or access Licensee's data
+  - Require data transmission to EOCS systems
+  - Maintain custody of any Protected Health Information (PHI)
+  - Require a Business Associate Agreement (BAA) under HIPAA
+
+4.2 LICENSEE RESPONSIBILITIES
+Licensee is solely responsible for:
+
+  - Data security within their Authorized Environment
+  - Compliance with HIPAA, GDPR, or other applicable privacy regulations
+  - Access controls for the Software and resulting analytics
+  - Backup and disaster recovery of their data and Software installation
+
+4.3 NO PHI EXPOSURE
+This Agreement does not create any obligation for EOCS to handle, process, 
+or secure PHI. All PHI remains within Licensee's security boundary.
+
+================================================================================
+5. INTELLECTUAL PROPERTY
+================================================================================
+
+5.1 OWNERSHIP
+EOCS retains all right, title, and interest in the Software, including all 
+intellectual property rights. This Agreement does not transfer ownership of 
+the Software to Licensee.
+
+5.2 LICENSEE MODIFICATIONS
+Licensee owns any modifications or derivative works created by Licensee. 
+However, such modifications:
+  - May not be distributed without EOCS consent
+  - Do not grant Licensee rights to underlying EOCS intellectual property
+  - Remain subject to the restrictions in Section 3
+
+5.3 FEEDBACK
+Any feedback, suggestions, or improvements provided by Licensee to EOCS may 
+be incorporated into future Software versions without compensation.
+
+================================================================================
+6. SUPPORT AND MAINTENANCE
+================================================================================
+
+6.1 IMPLEMENTATION SUPPORT
+All licenses include 90 days of implementation support:
+  - Up to 20 hours of video consultation
+  - Email support with 48-hour response time
+  - Technical documentation and training materials
+
+6.2 OPTIONAL ANNUAL MAINTENANCE (Perpetual License holders)
+Perpetual License holders may purchase annual maintenance as set forth in 
+Schedule A. Maintenance includes:
+  - Quarterly code releases with enhancements
+  - Bug fixes and performance optimizations
+  - Email support with 72-hour response time
+  - 2 hours per month of scheduled consultation
+
+6.3 ANNUAL LICENSE SUPPORT
+Annual License holders receive all maintenance benefits plus:
+  - Priority support with 24-hour response time
+  - 4 hours per month of scheduled consultation
+  - Quarterly check-in meetings
+
+================================================================================
+7. FEES AND PAYMENT
+================================================================================
+
+7.1 LICENSE FEES
+Licensee shall pay the License Fees set forth in Schedule A. Schedule A may 
+be amended by EOCS from time to time; provided, however, that any fee changes 
+shall not affect licenses already executed.
+
+7.2 PAYMENT TERMS
+  - Perpetual License: 50% upon execution, 50% upon code delivery
+  - Annual License: Invoiced annually in advance
+  - Net 30 payment terms unless otherwise agreed
+  - Payment by check, ACH, wire transfer, or credit card (3% processing fee)
+
+7.3 TAXES
+License Fees are exclusive of taxes. Licensee is responsible for all 
+applicable sales, use, VAT, or similar taxes.
+
+================================================================================
+8. WARRANTIES AND DISCLAIMERS
+================================================================================
+
+8.1 LIMITED WARRANTY
+EOCS warrants that for 90 days following delivery:
+  - The Software will perform substantially as documented
+  - EOCS has the right to license the Software
+
+8.2 DISCLAIMER
+EXCEPT AS EXPRESSLY SET FORTH ABOVE, THE SOFTWARE IS PROVIDED "AS IS" 
+WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED 
+TO WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, OR 
+NON-INFRINGEMENT.
+
+8.3 CLINICAL DISCLAIMER
+The Software provides analytical tools based on claims data and risk 
+adjustment methodologies. IT IS NOT A MEDICAL DEVICE AND SHOULD NOT BE USED 
+FOR CLINICAL DECISION-MAKING WITHOUT APPROPRIATE PROFESSIONAL OVERSIGHT. 
+EOCS makes no warranty regarding clinical outcomes.
+
+================================================================================
+9. LIMITATION OF LIABILITY
+================================================================================
+
+9.1 EXCLUSION OF DAMAGES
+IN NO EVENT SHALL EOCS BE LIABLE FOR ANY INDIRECT, INCIDENTAL, SPECIAL, 
+CONSEQUENTIAL, OR PUNITIVE DAMAGES, INCLUDING LOSS OF PROFITS, DATA, OR 
+BUSINESS OPPORTUNITIES, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.
+
+9.2 CAP ON LIABILITY
+EOCS'S TOTAL LIABILITY UNDER THIS AGREEMENT SHALL NOT EXCEED THE LICENSE 
+FEES PAID BY LICENSEE IN THE TWELVE (12) MONTHS PRECEDING THE CLAIM.
+
+================================================================================
+10. TERM AND TERMINATION
+================================================================================
+
+10.1 TERM
+  - Perpetual License: Indefinite, subject to compliance with this Agreement
+  - Annual License: One year from effective date, renewable annually
+
+10.2 TERMINATION FOR BREACH
+Either party may terminate this Agreement upon 30 days written notice if the 
+other party materially breaches and fails to cure within the notice period.
+
+10.3 EFFECT OF TERMINATION
+Upon termination:
+  - Licensee's right to use the Software terminates
+  - Licensee must destroy all copies of the Software
+  - Sections 4, 5, 8, 9, and 11 survive termination
+
+10.4 NO KILL SWITCH
+The Software contains no mechanisms to disable functionality. Upon 
+termination, Licensee's installed version continues to operate technically, 
+but Licensee has no legal right to use it.
+
+================================================================================
+11. GENERAL PROVISIONS
+================================================================================
+
+11.1 GOVERNING LAW
+This Agreement shall be governed by the laws of the State of Alabama, USA, 
+without regard to conflict of law principles.
+
+11.2 DISPUTE RESOLUTION
+Any disputes arising under this Agreement shall be resolved in the state or 
+federal courts located in Jefferson County, Alabama, and each party consents 
+to the exclusive jurisdiction of such courts.
+
+11.3 ENTIRE AGREEMENT
+This Agreement, together with Schedule A, constitutes the entire agreement 
+between the parties and supersedes all prior negotiations, representations, 
+or agreements.
+
+11.4 AMENDMENT
+This Agreement may only be amended in writing signed by both parties. 
+Notwithstanding the foregoing, EOCS may update Schedule A for new licensees 
+without notice.
+
+11.5 ASSIGNMENT
+Licensee may not assign this Agreement without EOCS's prior written consent. 
+EOCS may assign this Agreement in connection with a merger, acquisition, or 
+sale of substantially all assets.
+
+11.6 SEVERABILITY
+If any provision is found unenforceable, the remaining provisions continue 
+in full force.
+
+11.7 WAIVER
+Failure to enforce any provision does not constitute waiver of future 
+enforcement.
+
+================================================================================
+12. WHAT THIS LICENSE DOES NOT INCLUDE
+================================================================================
+
+To avoid confusion, this license DOES NOT include:
+
+  - PACES episode grouper software (licensed separately from PACES Inc)
+  - Database infrastructure (Licensee provides)
+  - Business Intelligence tools (Tableau, Power BI, etc.)
+  - Data warehouse hosting costs
+  - Custom dashboard development (available as add-on)
+  - On-site training (available as add-on)
+
+================================================================================
+ACCEPTANCE
+================================================================================
+
+By installing or using the Software, Licensee acknowledges having read this 
+Agreement, understands it, and agrees to be bound by its terms.
+
+For questions about licensing:
+
 Episodes of Care Solutions, LLC
 Birmingham, AL 35203
 Email: fopelka@eocs.ltd
 Web: www.eocs.ltd
+
+================================================================================
+                    Copyright (c) 2025-2026 Episodes of Care Solutions, LLC
+                                    All Rights Reserved
+================================================================================
+
+
+
+================================================================================
+                                  SCHEDULE A
+                           LICENSE FEES AND PRICING
+                            Effective: January 2026
+================================================================================
+
+
+1. LICENSE OPTIONS
+--------------------------------------------------------------------------------
+
+PERPETUAL LICENSE
+  One-time fee:  $30,000
+  Includes:      Software code package, 90-day implementation support, 
+                 perpetual use rights
+  Updates:       Requires active Maintenance Agreement
+
+ANNUAL LICENSE
+  Annual fee:    $18,000 per year
+  Includes:      Software code package, implementation support, all updates, 
+                 priority support
+  Renewal:       Automatic unless canceled 30 days prior to anniversary
+
+PACES PARTNER LICENSE
+  Master fee:    $50,000 one-time
+  Per-deployment: $5,000 per client installation
+  Includes:      Resale rights, co-marketing support, partner training
+
+
+2. MAINTENANCE (Perpetual License Holders)
+--------------------------------------------------------------------------------
+
+  Annual fee:    $8,000 per year
+  Includes:      Quarterly code releases, bug fixes, email support 
+                 (72-hour response), 2 hours/month consultation
+
+
+3. OPTIONAL ADD-ON SERVICES
+--------------------------------------------------------------------------------
+
+  Risk-Free Pilot:              $2,500 (credited toward license purchase)
+  Custom Dashboard Development: $5,000 per dashboard type
+  On-Site Training:             $5,000 per day plus travel expenses
+  White-Label Customization:    $8,000
+  Custom Integration:           $10,000 - $15,000
+
+
+4. VOLUME DISCOUNTS
+--------------------------------------------------------------------------------
+
+  Multi-year perpetual license:   15% discount
+  State consortium (3+ states):   25% discount per state
+  Academic partnerships:          Custom pricing available
+
+
+5. NOTES
+--------------------------------------------------------------------------------
+
+  - All fees are in US Dollars
+  - Prices subject to change for new licenses; executed agreements honored 
+    at contracted rates
+  - Credit card payments subject to 3% processing fee
+  - Custom quotes available for enterprise deployments
+
+
+================================================================================
+                              — End of Schedule A —
+================================================================================
