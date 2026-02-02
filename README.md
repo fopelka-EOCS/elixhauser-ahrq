@@ -2,6 +2,13 @@
 
 Python package for AHRQ Elixhauser Comorbidity Index calculation using ICD-10-CM diagnosis codes.
 
+When applied with a PACES episode grouper, the complete dashboard can view patients by risk categories. 
+Such as High, Moderate, Low (or a hybrid mixed risk; then add on components such as cost, complication 
+avoidance or level of goal attainment for the episode. 
+
+<img width="1773" height="842" alt="image" src="https://github.com/user-attachments/assets/e4098399-38a3-4261-b7b6-5007c44a9ef6" />
+
+
 ## Quick Start
 ```python
 from elixhauser_ahrq import ElixhauserMapper, ElixhauserScorer
