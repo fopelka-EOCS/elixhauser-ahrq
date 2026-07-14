@@ -1,0 +1,7 @@
+{
+  "bundle": "t003_cmr_mapping",
+  "source_file": "SAS-Programs/CMR_Mapping_Program_v2026-1.sas",
+  "source_blob_sha": "3f6c081111db5d0151c208733a373be69aee05c5",
+  "source_commit": "73630ce6f0e41dadfddeff77881bdb2ea5eb826d",
+  "notes": "The comorbidity mapping DATA step (%comorbidity macro) shipped essentially verbatim: ICDVER derivation, the DX/COMANYPOA/COMPOA/VALANYPOA/VALPOA arrays, the DXVALUE=PUT(DX(I),COMFMT.) lookup loop, POA-exempt gating via $POAXMPT_V43FMT, the combination-code assignments, and the mutual-exclusion rules, then PROC MEANS. Adaptations: LIBNAME IN1/OUT1 to WORK; DXPREFIX/POAPREFIX/NUMDX(=6)/NDXVAR/CORE/OUT set for a synthetic 6-record discharge file; the 11-version POA-exempt OR chain reduced to the ICDVER=43 branch (all mock records are 2026Q1). The autoexec builds a WORK format library from a verbatim excerpt of the upstream $COMFMT ranges plus a small $POAXMPT_V43FMT. Output confirms non-zero prevalence for the categories present in the mock codes. No patient data used."
+}

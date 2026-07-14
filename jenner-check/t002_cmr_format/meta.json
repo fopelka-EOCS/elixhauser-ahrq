@@ -1,0 +1,7 @@
+{
+  "bundle": "t002_cmr_format",
+  "source_file": "SAS-Programs/CMR_Format_Program_v2026-1.sas",
+  "source_blob_sha": "ec10e59df5c1a3ce40bf5c42d823b5af61f5651d",
+  "source_commit": "73630ce6f0e41dadfddeff77881bdb2ea5eb826d",
+  "notes": "The full v2026.1 format library: one PROC FORMAT defining $COMFMT (4568 ICD-10-CM ranges) plus eleven POA-exempt formats $POAXMPT_V33FMT..V43FMT (35K-38K ranges each). Shipped verbatim; the single LIBNAME LIBRARY path is redirected from C:\\COMORB\\FMTLIB\\ to WORK so the catalog builds in the run's own workspace. No input data."
+}
