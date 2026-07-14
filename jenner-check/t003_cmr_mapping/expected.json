@@ -1,0 +1,13 @@
+{
+  "_captured_at": "2026-07-14T10:47:00Z",
+  "_captured_run_id": "r_e356532e9aff43609c5cfd9c2c78a060",
+  "status": "ok",
+  "exit_code": 0,
+  "log_contains": [
+    "NOTE: Read 6 rows from IN1.mock_core.",
+    "NOTE: Wrote OUT1.mock_mapped (6 rows, 61 columns).",
+    "NOTE: PROC MEANS statement used."
+  ],
+  "log_does_not_contain": ["ERROR:", "[JENNER-ERROR"],
+  "diagnostics": {"parse_warnings": [], "runtime_warnings": []}
+}

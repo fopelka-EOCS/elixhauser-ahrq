@@ -1,0 +1,48 @@
+                            Elixhauser Comorbidity Software Refined for ICD-10-CM Diagnoses
+                                              Comorbidity Mapping Program
+                                             Means of Comorbidity Variables
+
+                                                  The MEANS Procedure
+
+ Variable          Label                                                N   N Miss           Mean        Std Dev        Minimum        Maximum
+ ---------------------------------------------------------------------------------------------------------------------------------------------
+ CMR_AIDS          Acquired immune deficiency syndrome                  6        0      0.3333333      0.5163978      0.0000000      1.0000000
+ CMR_ALCOHOL       Alcohol abuse                                        6        0      0.1666667      0.4082483      0.0000000      1.0000000
+ CMR_ANEMDEF       Anemias due to other nutritional deficiencies        6        0      0.0000000      0.0000000      0.0000000      0.0000000
+ CMR_AUTOIMMUNE    Autoimmune conditions                                6        0      0.0000000      0.0000000      0.0000000      0.0000000
+ CMR_BLDLOSS       Chronic blood loss anemia (iron deficiency)          6        0      0.0000000      0.0000000      0.0000000      0.0000000
+ CMR_CANCER_LYMPH  Lymphoma                                             6        0      0.0000000      0.0000000      0.0000000      0.0000000
+ CMR_CANCER_LEUK   Leukemia                                             6        0      0.0000000      0.0000000      0.0000000      0.0000000
+ CMR_CANCER_METS   Metastatic cancer                                    6        0      0.3333333      0.5163978      0.0000000      1.0000000
+ CMR_CANCER_NSITU  Solid tumor without metastasis, in situ              6        0      0.0000000      0.0000000      0.0000000      0.0000000
+ CMR_CANCER_SOLID  Solid tumor without metastasis, malignant            6        0      0.0000000      0.0000000      0.0000000      0.0000000
+ CMR_CBVD          Cerebrovascular disease                              6        0      0.0000000      0.0000000      0.0000000      0.0000000
+ CMR_HF            Heart failure                                        6        0      0.0000000      0.0000000      0.0000000      0.0000000
+ CMR_COAG          Coagulopathy                                         6        0      0.0000000      0.0000000      0.0000000      0.0000000
+ CMR_DEMENTIA      Dementia                                             6        0      0.1666667      0.4082483      0.0000000      1.0000000
+ CMR_DEPRESS       Depression                                           6        0      0.3333333      0.5163978      0.0000000      1.0000000
+ CMR_DIAB_UNCX     Diabetes without chronic complications               6        0      0.0000000      0.0000000      0.0000000      0.0000000
+ CMR_DIAB_CX       Diabetes with chronic complications                  6        0      0.3333333      0.5163978      0.0000000      1.0000000
+ CMR_DRUG_ABUSE    Drug abuse                                           6        0      0.0000000      0.0000000      0.0000000      0.0000000
+ CMR_HTN_CX        Hypertension, complicated                            6        0      0.0000000      0.0000000      0.0000000      0.0000000
+ CMR_HTN_UNCX      Hypertension, uncomplicated                          6        0      0.3333333      0.5163978      0.0000000      1.0000000
+ CMR_LIVER_MLD     Liver disease, mild                                  6        0      0.0000000      0.0000000      0.0000000      0.0000000
+ CMR_LIVER_SEV     Liver disease, moderate to severe                    6        0      0.0000000      0.0000000      0.0000000      0.0000000
+ CMR_LUNG_CHRONIC  Chronic pulmonary disease                            6        0      0.3333333      0.5163978      0.0000000      1.0000000
+ CMR_NEURO_MOVT    Neurological disorders affecting movement            6        0      0.0000000      0.0000000      0.0000000      0.0000000
+ CMR_NEURO_OTH     Other neurological disorders                         6        0      0.0000000      0.0000000      0.0000000      0.0000000
+ CMR_NEURO_SEIZ    Seizures and epilepsy                                6        0      0.0000000      0.0000000      0.0000000      0.0000000
+ CMR_OBESE         Obesity                                              6        0      0.0000000      0.0000000      0.0000000      0.0000000
+ CMR_PARALYSIS     Paralysis                                            6        0      0.0000000      0.0000000      0.0000000      0.0000000
+ CMR_PERIVASC      Peripheral vascular disease                          6        0      0.0000000      0.0000000      0.0000000      0.0000000
+ CMR_PSYCHOSES     Psychoses                                            6        0      0.0000000      0.0000000      0.0000000      0.0000000
+ CMR_PULMCIRC      Pulmonary circulation disease                        6        0      0.0000000      0.0000000      0.0000000      0.0000000
+ CMR_RENLFL_MOD    Renal failure, moderate                              6        0      0.0000000      0.0000000      0.0000000      0.0000000
+ CMR_RENLFL_SEV    Renal failure, severe                                6        0      0.0000000      0.0000000      0.0000000      0.0000000
+ CMR_THYROID_HYPO  Hypothyroidism                                       6        0      0.0000000      0.0000000      0.0000000      0.0000000
+ CMR_THYROID_OTH   Other thyroid disorders                              6        0      0.0000000      0.0000000      0.0000000      0.0000000
+ CMR_ULCER_PEPTIC  Peptic ulcer disease x bleeding                      6        0      0.0000000      0.0000000      0.0000000      0.0000000
+ CMR_VALVE         Valvular disease                                     6        0      0.0000000      0.0000000      0.0000000      0.0000000
+ CMR_WGHTLOSS      Weight loss                                          6        0      0.0000000      0.0000000      0.0000000      0.0000000
+ ---------------------------------------------------------------------------------------------------------------------------------------------
+

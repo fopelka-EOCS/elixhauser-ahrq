@@ -1,0 +1,7 @@
+{
+  "bundle": "t001_cmr_index",
+  "source_file": "SAS-Programs/CMR_Index_Program_v2026-1.sas",
+  "source_blob_sha": "8b4eed208ea0cda1041f0f5c287e1d721210d75b",
+  "source_commit": "73630ce6f0e41dadfddeff77881bdb2ea5eb826d",
+  "notes": "Elixhauser mortality/readmission index calculator: readmission + mortality weight assignments, four parallel arrays over the 38 CMR_ comorbidity flags, do-loop multiply-and-sum, then PROC MEANS. Ships their DATA step and PROC MEANS verbatim; LIBNAME IN1/OUT1 redirected to WORK and CORE/OUT pointed at a synthetic 8-patient cohort of the 38 flags built in autoexec. No patient data used."
+}

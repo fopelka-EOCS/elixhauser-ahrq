@@ -1,0 +1,13 @@
+{
+  "_captured_at": "2026-07-14T10:44:00Z",
+  "_captured_run_id": "r_4134673ecfac4084948deaf16ba79095",
+  "status": "ok",
+  "exit_code": 0,
+  "log_contains": [
+    "NOTE: PROC FORMAT library=LIBRARY",
+    "NOTE: FORMAT $COMFMT defined (4568 ranges).",
+    "NOTE: FORMAT $POAXMPT_V43FMT defined (38350 ranges)."
+  ],
+  "log_does_not_contain": ["ERROR:", "[JENNER-ERROR"],
+  "diagnostics": {"parse_warnings": [], "runtime_warnings": []}
+}

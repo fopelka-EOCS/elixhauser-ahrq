@@ -1,0 +1,31 @@
+NOTE: Jenner v1.5.30 (build v1.5.30+unknown.20260714T043649Z.x86_64-unknown-linux-gnu)
+
+NOTE: Option OBS changed to 100.
+NOTE: Library LIBRARY uses 1 concatenated paths.
+NOTE: PROC FORMAT library=LIBRARY
+
+NOTE: FORMAT $COMFMT defined (35 ranges).
+NOTE: FORMAT $POAXMPT_V43FMT defined (5 ranges).
+NOTE: DATA work.mock_core
+
+NOTE: Processing inline DATALINES (6 lines)
+
+NOTE: Read 6 rows from DATALINES.
+NOTE: Wrote work.mock_core (6 rows, 15 columns).
+NOTE: DATA elapsed:
+  wall  0.00 seconds
+  cpu   0.00 seconds
+NOTE: Library IN1 uses 1 concatenated paths.
+NOTE: Library OUT1 uses 1 concatenated paths.
+NOTE: Option TITLE changed to Elixhauser Comorbidity Software Refined for ICD-10-CM Diagnoses.
+NOTE: Option TITLE2 changed to Comorbidity Mapping Program.
+NOTE: DATA OUT1.mock_mapped
+
+
+NOTE: Read 6 rows from IN1.mock_core.
+NOTE: Wrote OUT1.mock_mapped (6 rows, 61 columns).
+NOTE: DATA elapsed:
+  wall  0.00 seconds
+  cpu   0.00 seconds
+NOTE: PROC MEANS
+NOTE: PROC MEANS statement used.
