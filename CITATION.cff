@@ -1,0 +1,93 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+type: software
+title: "elixhauser-ahrq: Python Implementation of the AHRQ Elixhauser Comorbidity Index"
+version: "2026.1.0"
+date-released: "2026-06-01"
+url: "https://github.com/fopelka-EOCS/elixhauser-ahrq"
+repository-code: "https://github.com/fopelka-EOCS/elixhauser-ahrq"
+license: MIT
+authors:
+  - family-names: "Opelka"
+    given-names: "Frank G."
+    orcid: ""
+    affiliation: "Episodes of Care Solutions (EOCS)"
+    email: "fopelka@eocs.ltd"
+keywords:
+  - elixhauser
+  - comorbidity index
+  - risk adjustment
+  - ICD-10-CM
+  - van Walraven
+  - healthcare analytics
+  - patient safety
+  - episode of care
+  - AHRQ
+  - HCUP
+abstract: >-
+  Python implementation of the AHRQ Elixhauser Comorbidity Index with
+  van Walraven scoring. Maps 4,568 ICD-10-CM diagnosis codes to 38
+  comorbidity categories and calculates composite risk scores for
+  mortality and readmission prediction. Based on AHRQ HCUP Elixhauser
+  Comorbidity Software Refined for ICD-10-CM (v2026.1). CDC-reviewed.
+  Designed for integration into claims-based episode analytics,
+  EHR-based prospective risk assessment, and clinical AI pipelines.
+references:
+  - type: article
+    authors:
+      - family-names: "Elixhauser"
+        given-names: "Anne"
+      - family-names: "Steiner"
+        given-names: "Claudia"
+      - family-names: "Harris"
+        given-names: "D. Robert"
+      - family-names: "Coffey"
+        given-names: "Rosanna M."
+    title: "Comorbidity measures for use with administrative data"
+    journal: "Medical Care"
+    volume: 36
+    issue: 1
+    start: 8
+    end: 27
+    year: 1998
+    doi: "10.1097/00005650-199801000-00004"
+  - type: article
+    authors:
+      - family-names: "van Walraven"
+        given-names: "Carl"
+      - family-names: "Austin"
+        given-names: "Peter C."
+      - family-names: "Jennings"
+        given-names: "Alison"
+      - family-names: "Quan"
+        given-names: "Hude"
+      - family-names: "Forster"
+        given-names: "Alan J."
+    title: "A modification of the Elixhauser comorbidity measures into a point system for hospital death using administrative data"
+    journal: "Medical Care"
+    volume: 47
+    issue: 6
+    start: 626
+    end: 633
+    year: 2009
+    doi: "10.1097/MLR.0b013e31819432e5"
+  - type: article
+    authors:
+      - family-names: "Moore"
+        given-names: "Brian J."
+      - family-names: "White"
+        given-names: "Susan"
+      - family-names: "Washington"
+        given-names: "Raynard"
+      - family-names: "Coenen"
+        given-names: "Natascha"
+      - family-names: "Elixhauser"
+        given-names: "Anne"
+    title: "Identifying increased risk of readmission and in-hospital mortality using hospital administrative data: the AHRQ Elixhauser Comorbidity Index"
+    journal: "Medical Care"
+    volume: 55
+    issue: 7
+    start: 698
+    end: 705
+    year: 2017
+    doi: "10.1097/MLR.0000000000000735"
