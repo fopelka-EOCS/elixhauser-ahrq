@@ -3,8 +3,8 @@
 [![PyPI version](https://img.shields.io/pypi/v/elixhauser-ahrq.svg)](https://pypi.org/project/elixhauser-ahrq/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 [![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
-[![🤗 Dataset](https://img.shields.io/badge/🤗-Dataset-yellow.svg)](https://huggingface.co/datasets/EOCS/elixhauser-icd10-mapping)
-[![🤗 Space](https://img.shields.io/badge/🤗-Demo-orange.svg)](https://huggingface.co/spaces/EOCS/elixhauser-risk-calculator)
+[![🤗 Dataset](https://img.shields.io/badge/🤗-Dataset-yellow.svg)](https://huggingface.co/datasets/EOCS-LTD/elixhauser-icd10-mapping)
+[![🤗 Space](https://img.shields.io/badge/🤗-Demo-orange.svg)](https://huggingface.co/spaces/fopelka/elixhauser-risk-calculator)
 
 **Python package for AHRQ Elixhauser Comorbidity Index risk adjustment using ICD-10-CM diagnosis codes.**
 
