@@ -61,7 +61,7 @@ Repository = "https://github.com/fopelka-EOCS/elixhauser-ahrq"
 Changelog = "https://github.com/fopelka-EOCS/elixhauser-ahrq/blob/main/CHANGELOG.md"
 
 [tool.setuptools.packages.find]
-include = ["elixhauser_ahrq"]
+include = ["elixhauser_ahrq*"]
 
 [tool.setuptools.package-data]
 elixhauser_ahrq = ["data/*.json.gz", "data/*.xlsx"]
