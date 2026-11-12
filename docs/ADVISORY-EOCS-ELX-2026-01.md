@@ -7,8 +7,8 @@
 | Item | Status |
 |---|---|
 | elixhauser-ahrq 2027.1.0 (AHRQ v2027.1) | **Published** on PyPI |
-| Hugging Face dataset correction | Prepared; **not yet published**. Until it is, do not use the dataset's `van_walraven_mortality_weight` column |
-| Calculator (Hugging Face Space) | Rebuilt; **remains Private**. The former app's results should not be used |
+| Hugging Face dataset correction | **Published** 2026-11-12 (AHRQ v2027.1 content and AHRQ's weights; the `van_walraven_mortality_weight` column is removed) |
+| Calculator (Hugging Face Space) | Rebuilt and deployed; **remains Private** pending final approval. The former app's results should not be used |
 | PyPI releases 2026.1.0–2026.1.3 | **Not yet yanked.** Do not use them; upgrade to 2027.1.0 |
 | Comparison with executed AHRQ SAS output (T7) | **Pending** |
 
@@ -17,7 +17,7 @@ This table will be updated as each item is completed.
 *Applies to:*
 - *elixhauser-ahrq 2026.1.0–2026.1.3 (PyPI), and GitHub versions before 2027.1.0;*
 - *the former Hugging Face Space `fopelka/elixhauser-risk-calculator`;*
-- *the Hugging Face dataset `EOCS-LTD/elixhauser-icd10-mapping` (current public version).*
+- *the Hugging Face dataset `EOCS-LTD/elixhauser-icd10-mapping` before 2026-11-12.*
 
 *Fixed in: elixhauser-ahrq 2027.1.0, which implements AHRQ Elixhauser Comorbidity Software Refined for ICD-10-CM v2027.1.*
 
@@ -54,7 +54,7 @@ Do not use its earlier results. A rebuilt calculator for 2027.1.0, which asks fo
 
 ## 4. Dataset
 
-`EOCS-LTD/elixhauser-icd10-mapping` currently contains AHRQ's v2025.1 code mapping and a `van_walraven_mortality_weight` column. That column is not AHRQ's index weight set and should not be used for scoring. A corrected version with AHRQ v2027.1 content and AHRQ's weights is prepared and will replace it.
+Before 2026-11-12, `EOCS-LTD/elixhauser-icd10-mapping` contained AHRQ's v2025.1 code mapping and a `van_walraven_mortality_weight` column. That column was not AHRQ's index weight set and should not be used for scoring. The dataset now carries AHRQ v2027.1 content and AHRQ's weights.
 
 ## 5. Documentation
 
