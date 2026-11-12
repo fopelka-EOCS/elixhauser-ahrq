@@ -31,7 +31,7 @@ The files in `SAS-Programs/` are the zip's contents, unmodified.
 | T5 | README examples (doctest) and `example_usage.py` are executed | Package output | Pass |
 | T6 | Randomized differential test: 2 seeds × 20,000 synthetic discharges, with 0–25 secondary diagnoses each. The data are enriched with combined-label, cerebrovascular and POA-exempt codes, all POA values, versions 33–44, out-of-window dates, and 15% of records without POA. Checks: all 38 flags (including not-assessable), ICD-10-CM version, and both indices. | `validation/sas_reference.py`, an independent line-by-line transliteration of AHRQ's SAS mapping and index programs. It was written from the SAS programs alone, without access to this package's code. See `validation/SAS_REFERENCE_NOTES.md`. | **0 mismatches in 40,000** |
 | M | Mutation check: each 2026 defect (R2–R7) is re-planted in a copy, and the suite must fail | `validation/mutation_check.py` | Every mutation caught; control passes |
-| T7 | Field-by-field comparison with output from AHRQ's SAS software itself | Not available | **Not done** |
+| T7 | Field-by-field comparison with output from AHRQ's SAS software itself, on 2,000 synthetic discharges with and without POA | AHRQ SAS v2027.1, run with the kit from `validation/make_t7_kit.py` and compared by `validation/t7_compare.py` | **Not done**: no SAS environment is available to the maintainers; the kit is ready for anyone with SAS |
 
 ## What this does and does not establish
 
@@ -65,4 +65,6 @@ pip install -e ".[dev]"
 python tools/build_data.py --check
 python -m pytest tests
 python validation/mutation_check.py
+python validation/make_t7_kit.py      # then run validation/t7_kit/RUN_T7.sas in SAS
+python validation/t7_compare.py validation/t7_kit/sas_output.csv
 ```
