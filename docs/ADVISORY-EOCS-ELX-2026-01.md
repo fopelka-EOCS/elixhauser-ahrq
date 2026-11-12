@@ -8,7 +8,7 @@
 |---|---|
 | elixhauser-ahrq 2027.1.0 (AHRQ v2027.1) | **Published** on PyPI |
 | Hugging Face dataset correction | **Published** 2026-11-12 (AHRQ v2027.1 content and AHRQ's weights; the `van_walraven_mortality_weight` column is removed) |
-| Calculator (Hugging Face Space) | Rebuilt and deployed; **remains Private** pending final approval. The former app's results should not be used |
+| Calculator (Hugging Face Space) | **Public** 2026-11-12: https://huggingface.co/spaces/fopelka/elixhauser-risk-calculator (elixhauser-ahrq 2027.1.0). Results from the former app should not be used |
 | PyPI releases 2026.1.0–2026.1.3 | **Not yet yanked.** Do not use them; upgrade to 2027.1.0 |
 | Comparison with executed AHRQ SAS output (T7) | **Pending** |
 
@@ -50,7 +50,7 @@ The former Hugging Face app supplied no POA information and treated the first co
 - the 18 measures that require POA (including heart failure, renal failure and coagulopathy) were never counted;
 - scores depended on the order in which codes were entered.
 
-Do not use its earlier results. A rebuilt calculator for 2027.1.0, which asks for the principal diagnosis and POA explicitly, is not yet public.
+Do not use its earlier results. The rebuilt calculator for 2027.1.0, which asks for the principal diagnosis and POA explicitly, is available at https://huggingface.co/spaces/fopelka/elixhauser-risk-calculator.
 
 ## 4. Dataset
 
