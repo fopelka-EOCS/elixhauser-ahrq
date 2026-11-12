@@ -1,0 +1,32 @@
+name: Tests
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.10", "3.11", "3.12", "3.13", "3.14"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -e ".[dev]"
+      - name: Bundled data is a fresh build of AHRQ's SAS programs
+        run: python tools/build_data.py --check
+      - name: Test suite (parity, rules, 40,000-record differential, README)
+        run: python -m pytest tests
+      - name: Mutation check (each 2026 defect is caught)
+        if: matrix.python-version == '3.12'
+        run: python validation/mutation_check.py

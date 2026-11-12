@@ -1,16 +1,14 @@
 cff-version: 1.2.0
 message: "If you use this software, please cite it as below."
 type: software
-title: "elixhauser-ahrq: Python Implementation of the AHRQ Elixhauser Comorbidity Index"
-version: "2026.1.0"
-date-released: "2026-06-01"
+title: "elixhauser-ahrq: Python reimplementation of AHRQ Elixhauser Comorbidity Software Refined for ICD-10-CM"
+version: "2027.1.0"
 url: "https://github.com/fopelka-EOCS/elixhauser-ahrq"
 repository-code: "https://github.com/fopelka-EOCS/elixhauser-ahrq"
 license: MIT
 authors:
   - family-names: "Opelka"
     given-names: "Frank G."
-    orcid: ""
     affiliation: "Episodes of Care Solutions (EOCS)"
     email: "fopelka@eocs.ltd"
 keywords:
@@ -18,20 +16,15 @@ keywords:
   - comorbidity index
   - risk adjustment
   - ICD-10-CM
-  - van Walraven
-  - healthcare analytics
-  - patient safety
-  - episode of care
   - AHRQ
   - HCUP
 abstract: >-
-  Python implementation of the AHRQ Elixhauser Comorbidity Index with
-  van Walraven scoring. Maps 4,568 ICD-10-CM diagnosis codes to 38
-  comorbidity categories and calculates composite risk scores for
-  mortality and readmission prediction. Based on AHRQ HCUP Elixhauser
-  Comorbidity Software Refined for ICD-10-CM (v2026.1). CDC-reviewed.
-  Designed for integration into claims-based episode analytics,
-  EHR-based prospective risk assessment, and clinical AI pipelines.
+  Python reimplementation of AHRQ's Elixhauser Comorbidity Software Refined
+  for ICD-10-CM, v2027.1. Assigns AHRQ's 38 comorbidity measures from
+  secondary diagnoses with present-on-admission handling and AHRQ's
+  POA-exempt lists, and computes AHRQ's in-hospital mortality and 30-day
+  readmission indices. Code lists and weights are compiled from AHRQ's SAS
+  programs. Independent implementation; not produced or endorsed by AHRQ.
 references:
   - type: article
     authors:
@@ -51,26 +44,6 @@ references:
     end: 27
     year: 1998
     doi: "10.1097/00005650-199801000-00004"
-  - type: article
-    authors:
-      - family-names: "van Walraven"
-        given-names: "Carl"
-      - family-names: "Austin"
-        given-names: "Peter C."
-      - family-names: "Jennings"
-        given-names: "Alison"
-      - family-names: "Quan"
-        given-names: "Hude"
-      - family-names: "Forster"
-        given-names: "Alan J."
-    title: "A modification of the Elixhauser comorbidity measures into a point system for hospital death using administrative data"
-    journal: "Medical Care"
-    volume: 47
-    issue: 6
-    start: 626
-    end: 633
-    year: 2009
-    doi: "10.1097/MLR.0b013e31819432e5"
   - type: article
     authors:
       - family-names: "Moore"

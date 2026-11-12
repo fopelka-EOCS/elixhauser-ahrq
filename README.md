@@ -2,15 +2,32 @@
 
 [![PyPI version](https://img.shields.io/pypi/v/elixhauser-ahrq.svg)](https://pypi.org/project/elixhauser-ahrq/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
-[![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
-[![🤗 Dataset](https://img.shields.io/badge/🤗-Dataset-yellow.svg)](https://huggingface.co/datasets/EOCS-LTD/elixhauser-icd10-mapping)
-[![🤗 Space](https://img.shields.io/badge/🤗-Demo-orange.svg)](https://huggingface.co/spaces/fopelka/elixhauser-risk-calculator)
 
-**Python package for AHRQ Elixhauser Comorbidity Index risk adjustment using ICD-10-CM diagnosis codes.**
+**A Python reimplementation of AHRQ's Elixhauser Comorbidity Software Refined for ICD-10-CM, v2027.1 (FY2027).**
 
-Maps 4,568 ICD-10-CM codes to 38 Elixhauser comorbidity categories and calculates van Walraven composite scores for mortality and readmission risk. Validated against AHRQ Comorbidity Software Refined for ICD-10-CM (v2026.1). CDC-reviewed.
+It assigns AHRQ's 38 Elixhauser comorbidity measures from the secondary diagnoses on an inpatient discharge. It honours present-on-admission (POA) indicators and AHRQ's POA-exempt lists, and computes AHRQ's two indices: in-hospital mortality and 30-day all-cause readmission. The v2027.1 release covers ICD-10-CM codes from October 2015 through September 2027.
 
----
+> **Advisory: versions before 2027.1.0 contained errors.**
+> - **Wrong weights.** GitHub versions before 2026-05-08 contained incorrect index weights and POA logic.
+> - **Defects in 2026.1.0–2026.1.3:**
+>   - metastatic cancer suppressed leukemia and lymphoma;
+>   - POA-exempt codes were not honoured;
+>   - a POA value of `1` was accepted as present on admission;
+>   - the cerebrovascular "not present on admission" rule could not fire.
+> - **Calculator.** The former Hugging Face calculator treated the first code entered as a comorbidity and gave order-dependent results.
+>
+> All of these are corrected in 2027.1.0. Results produced with earlier versions should be re-run.
+>
+> **Read the advisory:** [Advisory EOCS-ELX-2026-01](https://github.com/fopelka-EOCS/elixhauser-ahrq/blob/main/docs/ADVISORY-EOCS-ELX-2026-01.md). Details are in the [CHANGELOG](https://github.com/fopelka-EOCS/elixhauser-ahrq/blob/main/CHANGELOG.md).
+
+This is an independent implementation. It is not produced, reviewed or endorsed by AHRQ.
+
+## Resources
+
+- **Package:** https://pypi.org/project/elixhauser-ahrq/
+- **Source and issues:** https://github.com/fopelka-EOCS/elixhauser-ahrq
+- **Calculator:** https://huggingface.co/spaces/fopelka/elixhauser-risk-calculator
+- **Dataset:** https://huggingface.co/datasets/EOCS-LTD/elixhauser-icd10-mapping
 
 ## Installation
 
@@ -18,184 +35,124 @@ Maps 4,568 ICD-10-CM codes to 38 Elixhauser comorbidity categories and calculate
 pip install elixhauser-ahrq
 ```
 
-## Quick Start
+## Quick start
+
+Give the principal diagnosis separately. AHRQ never maps it. Give each secondary diagnosis with its POA indicator.
 
 ```python
-from elixhauser_ahrq import ElixhauserMapper, ElixhauserScorer
+>>> from elixhauser_ahrq import score_discharge
+>>> r = score_discharge(
+...     principal_dx="I214",                                  # NSTEMI: not a comorbidity
+...     secondary_dx=["I5022", "E1122", "N186", "C7800", "I69351"],
+...     secondary_poa=["Y", "Y", "N", "Y", ""],               # I69351 is POA-exempt
+...     discharge_date="2026-11-02",                          # selects AHRQ's FY2027 exempt list
+... )
+>>> r["present"]
+['CANCER_METS', 'CBVD', 'HF', 'DIAB_CX', 'PARALYSIS']
+>>> r["mortality_index"], r["readmission_index"], r["partial"]
+(43, 25, False)
 
-# Map ICD-10-CM codes to comorbidity categories
-mapper = ElixhauserMapper()
-patient_dx = ["I509", "E119", "I10", "N183", "E6601"]
-flags = mapper.map_patient_diagnoses(patient_dx)
-
-# Calculate van Walraven composite score
-scorer = ElixhauserScorer(index_type="mortality")
-score = scorer.calculate_score(flags)
-
-print(f"van Walraven Score: {score}")
-print(f"Flagged comorbidities: {[k for k, v in flags.items() if v == 1]}")
 ```
 
-**Output:**
-```
-van Walraven Score: 7
-Flagged comorbidities: ['CHF', 'DiabetesUncomplicated', 'Hypertension', 'RenalFailure', 'Obesity']
-```
+ESRD (`N186`) is not counted: renal failure requires POA = Y or W, and it was coded N.
 
-## Risk Tier Assignment
-
-The van Walraven score maps to risk tiers for population stratification:
-
-| Risk Tier | Score Range | Clinical Profile |
-|-----------|-------------|-----------------|
-| **Low** | < 0 | Few or no significant comorbidities |
-| **Moderate** | 0 to 9 | Modest cumulative comorbidity burden |
-| **High** | ≥ 10 | Multiple serious comorbidities or single high-weight condition |
+**Without POA data**, AHRQ cannot assess 18 of the 38 measures. The package returns them as `None`, and the index is flagged as **partial**:
 
 ```python
-def assign_risk_tier(score):
-    if score < 0:
-        return "Low"
-    elif score <= 9:
-        return "Moderate"
-    else:
-        return "High"
+>>> r = score_discharge("I214", ["I5022", "E1122", "N186", "C7800", "I69351"])
+>>> r["present"], r["mortality_index"], r["partial"], len(r["not_assessable"])
+(['CANCER_METS', 'DIAB_CX'], 20, True, 18)
 
-tier = assign_risk_tier(score)
-print(f"Risk Tier: {tier}")  # "Moderate"
 ```
 
-Cut-points are starting recommendations. Validate against your population's observed complication rate gradients and adjust if needed. See the [Risk Stratification Guide](docs/) for methodology.
+### Rules implemented (from AHRQ's SAS mapping program)
 
-## API Reference
+| Rule | Behaviour |
+|---|---|
+| Principal diagnosis | Never mapped. Only secondary diagnoses are mapped. |
+| POA-dependent measures (18) | Counted only if POA = `Y` or `W`, or if the code is on AHRQ's POA-exempt list for the discharge's ICD-10-CM version. `N`, `U`, `1` and blank do not count. |
+| No POA data | The 18 POA-dependent measures are not assessable (`None`), and the index is partial. |
+| Cerebrovascular disease | Counted if a stroke code is present on admission, or a sequela code is present and no stroke is coded "not present on admission". |
+| Exclusions | Complicated diabetes overrides uncomplicated. Complicated hypertension overrides uncomplicated. Metastatic cancer overrides solid tumour and in situ. Solid tumour overrides in situ. Severe liver disease overrides mild. Severe renal failure overrides moderate. Metastatic cancer does **not** override leukemia or lymphoma. |
+| ICD-10-CM version | Derived from the discharge date as in AHRQ's program. With no date, AHRQ's default applies (version 44, FY2027). Dates outside October 2015 to September 2027 produce a warning. |
 
-### `ElixhauserMapper`
-
-Maps ICD-10-CM diagnosis codes to 38 AHRQ Elixhauser comorbidity categories.
+## API
 
 ```python
-mapper = ElixhauserMapper()
+from elixhauser_ahrq import assign_comorbidities, ElixhauserMapper, ElixhauserScorer
 
-# Map a list of diagnosis codes for one patient
-flags = mapper.map_patient_diagnoses(["I509", "E119", "I10"])
-# Returns: dict with 38 keys, each 0 or 1
+res = assign_comorbidities("I214", ["I5022"], ["Y"], discharge_date="2026-11-02")
+res.flags            # {measure: True / False / None} for all 38 measures
+res.trace            # per-code explanation: AHRQ label, POA, exemption, what was counted
 
-# Check a single code
-category = mapper.get_category("I509")
-# Returns: "CHF" (or None if code doesn't map)
+ElixhauserScorer("mortality").calculate_score(res.flags)
+ElixhauserScorer("readmission").calculate_score(res.flags)
+
+# Long-format DataFrames: one row per diagnosis, with a sequence column (1 = principal)
+flags_df = ElixhauserMapper().map_dataframe(df, "encounter_id", "dx", poa_col="poa",
+                                            dx_sequence_col="dx_seq",
+                                            discharge_date_col="discharge_date")
+scored = ElixhauserScorer("mortality").score_dataframe(flags_df)
 ```
 
-### `ElixhauserScorer`
+`ElixhauserMapper().map_patient_diagnoses(codes, poa)` remains for compatibility. It treats `codes[0]` as the principal diagnosis.
 
-Calculates the van Walraven composite score from comorbidity flags.
+## Indices and risk tiers
 
-```python
-# Mortality weights
-scorer_mort = ElixhauserScorer(index_type="mortality")
-score = scorer_mort.calculate_score(flags)
+The indices are AHRQ's in-hospital mortality and 30-day readmission indices (Moore et al., 2017). The weights come from AHRQ's SAS index program, so they match AHRQ exactly. They are **not** the van Walraven (2009) score.
 
-# Readmission weights
-scorer_read = ElixhauserScorer(index_type="readmission")
-score = scorer_read.calculate_score(flags)
-```
+**AHRQ publishes no risk tiers.** `stratify_risk` therefore requires thresholds you have validated for your own population and outcome.
 
-## Use with PACES Episode Grouper
+## Intended use and limitations
 
-When applied with a [PACES episode grouper](https://www.eocs.ltd), the Elixhauser risk tiers enable stratified episode performance reporting:
+- **Intended population.** Adult inpatient discharges with ICD-10-CM diagnoses and, ideally, POA indicators. The indices were developed to predict in-hospital mortality and 30-day readmission.
+- **Not intended for:** predicting complications or cost; outpatient or professional claims without POA; or individual clinical decisions.
+- **Claims without POA.** Inferring POA from claims (for example, with lookback windows) is a user-side assumption that AHRQ does not provide. It has not been validated here.
+- **Normalisation, not part of AHRQ's program.** Codes are upper-cased and have decimals removed. POA values are upper-cased. AHRQ's program caps diagnoses at its `NUMDX` setting (40 by default); this package maps every secondary diagnosis given.
 
-- **Claims-based (retrospective):** Score patients after episode completion for facility-level O:E ratio analysis — comparing observed vs. expected zero major complication rates within each risk tier
-- **EHR-based (prospective):** Score patients at the pre-operative visit from the active problem list for care planning, shared decision-making, and resource allocation
+## Validation status
 
-The risk scoring logic is identical in both contexts. The ICD-10 codes drive the same comorbidity flags and van Walraven weights whether sourced from claims or the EHR.
+This package reimplements AHRQ's Elixhauser Comorbidity Software Refined for ICD-10-CM (SAS programs, v2027.1).
 
-![Risk Stratification Dashboard](Dashboard.png)
+On every build:
+- its code lists, POA-exempt lists and weights are regenerated from AHRQ's SAS programs and must be identical;
+- its mapping is checked code by code against AHRQ's reference workbook;
+- its logic is checked on rule cases and on 40,000 randomized synthetic discharges against an independent transliteration of AHRQ's SAS mapping and index programs.
 
-## 38 Elixhauser Comorbidity Categories
+AHRQ does not publish reference output files. **Pending:** comparison with output from AHRQ's executed SAS software (test tier T7) has not been done. No SAS environment is available to the maintainers; a run-ready kit is in `validation/`.
 
-The complete list of categories with their van Walraven mortality weights:
+The package has **not** been comprehensively validated, and it has not been tested on real-world data. See [docs/VALIDATION.md](https://github.com/fopelka-EOCS/elixhauser-ahrq/blob/main/docs/VALIDATION.md) for exactly what has and has not been tested.
 
-| Category | Weight | Category | Weight |
-|----------|--------|----------|--------|
-| CHF | +7 | Lymphoma | +9 |
-| Cardiac Arrhythmias | +5 | Metastatic Cancer | +14 |
-| Valvular Disease | −1 | Solid Tumor w/o Metastasis | +4 |
-| Pulmonary Circulation | +4 | Rheumatoid Arthritis | +0 |
-| Peripheral Vascular | +2 | Coagulopathy | +3 |
-| Hypertension | +0 | Obesity | −4 |
-| Paralysis | +7 | Weight Loss | +6 |
-| Other Neurological | +6 | Fluid & Electrolyte | +5 |
-| Chronic Pulmonary | +3 | Blood Loss Anemia | −2 |
-| Diabetes Uncomplicated | −1 | Deficiency Anemia | −2 |
-| Diabetes Complicated | +0 | Alcohol Abuse | +0 |
-| Hypothyroidism | +0 | Drug Abuse | −7 |
-| Renal Failure | +5 | Psychoses | +0 |
-| Liver Disease | +1 | Depression | −3 |
-| Peptic Ulcer (no bleeding) | +0 | HIV/AIDS | +0 |
+## Use with PACES and other episode methods
 
-*Weights shown are van Walraven mortality weights. Readmission weights differ. See van Walraven et al. (2009) and Moore et al. (2017) for complete weight tables.*
+This package implements AHRQ's method only. For episode-based work, callers must decide which diagnoses represent baseline risk; for EOCS methods, pass baseline-window diagnoses only. Any such window, and any risk tiers, belong to the calling method, not to this package. EOCS's quality-risk stratification methodology is separate and is not part of this package.
 
 ## Versioning
 
-This package tracks AHRQ's annual releases:
+`YYYY.R.P`: AHRQ fiscal year, AHRQ release, and the patch of this implementation. Patch releases can change results when they correct defects; the CHANGELOG says so whenever they do.
 
-| Package Version | AHRQ Version | ICD-10-CM Codes | Status |
-|----------------|--------------|-----------------|--------|
-| v2026.1 | Elixhauser Comorbidity Software Refined for ICD-10-CM, FY2026 | 4,568 | Current, CDC-reviewed |
-
-When AHRQ publishes updated codes and weights, this package will be updated and a new version released.
+| Package | AHRQ release | Codes | Status |
+|---|---|---|---|
+| 2027.1.0 | v2027.1 (FY2027) | 4,573 | Current |
+| 2026.1.0–2026.1.3 | v2026.1 | 4,567 | **Superseded. Contains defects; do not use.** |
 
 ## Citation
 
-If you use this package in your work, please cite:
+See [CITATION.cff](https://github.com/fopelka-EOCS/elixhauser-ahrq/blob/main/CITATION.cff). Please also cite AHRQ's software:
 
-```bibtex
-@software{elixhauser_ahrq_2026,
-  author = {Opelka, Frank G.},
-  title = {elixhauser-ahrq: Python Implementation of the AHRQ Elixhauser Comorbidity Index},
-  version = {2026.1},
-  year = {2026},
-  organization = {Episodes of Care Solutions (EOCS)},
-  url = {https://github.com/fopelka-EOCS/elixhauser-ahrq},
-  note = {Based on AHRQ HCUP Elixhauser Comorbidity Software Refined for ICD-10-CM. CDC-reviewed.}
-}
-```
+> Agency for Healthcare Research and Quality. Elixhauser Comorbidity Software Refined for ICD-10-CM, v2027.1. Healthcare Cost and Utilization Project (HCUP). https://hcup-us.ahrq.gov/toolssoftware/comorbidityicd10/comorbidity_icd10.jsp
 
-## License & Related Products
+## About EOCS
 
-### This Package (MIT License)
+This package is maintained by Episodes of Care Solutions (EOCS), [www.eocs.ltd](https://www.eocs.ltd). EOCS separately offers **EOCS Analytics**, a commercial product for episode-based analytics. Its methods, including any risk stratification, are EOCS's own. They are not part of this package and not part of AHRQ's software.
 
-`elixhauser-ahrq` is **open source** under the MIT License. Free to use, modify, and distribute for any purpose, including commercial use.
+Neither this package nor any EOCS product is affiliated with, reviewed or endorsed by AHRQ or any other government agency.
 
-This package provides:
-- AHRQ Elixhauser Comorbidity Index v2026.1 implementation
-- ICD-10-CM to comorbidity category mapping (4,568 codes)
-- Risk scoring with AHRQ-validated weights (mortality and readmission)
-- Python classes for integration into analytics and AI pipelines
+## License and attribution
 
-### EOCS Analytics Platform (Commercial License)
-
-For organizations using the PACES episode grouper, **EOCS Analytics** is a separate commercial product that transforms PACES outputs into actionable dashboards.
-
-EOCS Analytics includes:
-- dbt transformation models for Snowflake, PostgreSQL, BigQuery, and other databases
-- Pre-built dashboard queries (surgeon, facility, payer perspectives)
-- Risk stratification using this Elixhauser package
-- Complication flagging and sequelae linkage
-- O:E ratio calculation with risk-adjusted facility profiling
-- Implementation support and documentation
-
-**Key differentiator:** EOCS Analytics runs entirely in YOUR environment. No data leaves your security boundary. No SaaS fees. You own the code.
-
-For licensing information: [fopelka@eocs.ltd](mailto:fopelka@eocs.ltd) | [www.eocs.ltd](https://www.eocs.ltd)
-
-## Attribution
-
-This package uses reference data from the Agency for Healthcare Research and Quality (AHRQ) Healthcare Cost and Utilization Project (HCUP). AHRQ HCUP tools are provided for public use.
-
-For more information: https://hcup-us.ahrq.gov/toolssoftware/comorbidityicd10/comorbidity_icd10.jsp
+MIT License. The code lists and weights come from AHRQ HCUP's Elixhauser Comorbidity Software Refined for ICD-10-CM, which AHRQ provides for public use. AHRQ's SAS programs, reference file, change log and user guide are included unmodified in `SAS-Programs/`.
 
 ## References
 
 - Elixhauser A, Steiner C, Harris DR, Coffey RM. Comorbidity measures for use with administrative data. *Medical Care* 1998;36(1):8–27.
-- van Walraven C, Austin PC, Jennings A, Quan H, Forster AJ. A modification of the Elixhauser comorbidity measures into a point system for hospital death using administrative data. *Medical Care* 2009;47(6):626–633.
 - Moore BJ, White S, Washington R, Coenen N, Elixhauser A. Identifying increased risk of readmission and in-hospital mortality using hospital administrative data: the AHRQ Elixhauser Comorbidity Index. *Medical Care* 2017;55(7):698–705.
