@@ -131,6 +131,12 @@ See [CITATION.cff](CITATION.cff). Please also cite AHRQ's software:
 
 > Agency for Healthcare Research and Quality. Elixhauser Comorbidity Software Refined for ICD-10-CM, v2027.1. Healthcare Cost and Utilization Project (HCUP). https://hcup-us.ahrq.gov/toolssoftware/comorbidityicd10/comorbidity_icd10.jsp
 
+## About EOCS
+
+This package is maintained by Episodes of Care Solutions (EOCS), [www.eocs.ltd](https://www.eocs.ltd). EOCS separately offers **EOCS Analytics**, a commercial product for episode-based analytics. Its methods, including any risk stratification, are EOCS's own. They are not part of this package and not part of AHRQ's software.
+
+Neither this package nor any EOCS product is affiliated with, reviewed or endorsed by AHRQ or any other government agency.
+
 ## License and attribution
 
 MIT License. The code lists and weights come from AHRQ HCUP's Elixhauser Comorbidity Software Refined for ICD-10-CM, which AHRQ provides for public use. AHRQ's SAS programs, reference file, change log and user guide are included unmodified in `SAS-Programs/`.
