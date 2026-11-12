@@ -1,0 +1,3 @@
+# AHRQ files are kept byte-for-byte as published (hashes are recorded in docs/VALIDATION.md).
+SAS-Programs/** -text
+elixhauser_ahrq/data/** -text

@@ -1,25 +1,38 @@
 """
-elixhauser_ahrq - Python package for AHRQ Elixhauser Comorbidity Index
+elixhauser_ahrq - Python reimplementation of AHRQ's Elixhauser Comorbidity
+Software Refined for ICD-10-CM, v2027.1 (FY2027; ICD-10-CM codes October 2015
+through September 2027).
 
-This package provides tools to:
-1. Load AHRQ Elixhauser reference data
-2. Map ICD-10-CM diagnosis codes to comorbidity categories
-3. Calculate risk scores and stratify patients
+* Assigns the 38 AHRQ Elixhauser comorbidity measures from secondary diagnoses,
+  honouring present-on-admission (POA) indicators and AHRQ's POA-exempt lists.
+* Computes AHRQ's in-hospital mortality and 30-day readmission indices.
 
-Based on: AHRQ Elixhauser Comorbidity Software Refined for ICD-10-CM v2026.1
+Code lists, POA-exempt lists and weights are compiled from AHRQ's SAS programs.
+This is an independent implementation; it is not produced, reviewed or endorsed
+by AHRQ. See docs/VALIDATION.md for exactly what has and has not been tested.
 """
 
-__version__ = "0.1.0"
-__author__ = "Frank Opelka, MD - Episodes of Care Solutions (EOCS)"
+__version__ = "2027.1.0"
+AHRQ_VERSION = "2027.1"
+__author__ = "Frank G. Opelka, MD, FACS - Episodes of Care Solutions (EOCS)"
 
 from .loader import ElixhauserLoader, load_ahrq_data
-from .mapper import ElixhauserMapper
-from .scorer import ElixhauserScorer, RiskStratum
+from .mapper import (ElixhauserMapper, ComorbidityResult, CodeTrace,
+                     assign_comorbidities)
+from .scorer import ElixhauserScorer, RiskStratum, score_discharge
+from ._data import icd_version_for, icd_version_for_date
 
 __all__ = [
-    'ElixhauserLoader',
-    'load_ahrq_data',
-    'ElixhauserMapper',
-    'ElixhauserScorer',
-    'RiskStratum',
+    "AHRQ_VERSION",
+    "ElixhauserLoader",
+    "load_ahrq_data",
+    "ElixhauserMapper",
+    "ComorbidityResult",
+    "CodeTrace",
+    "assign_comorbidities",
+    "ElixhauserScorer",
+    "RiskStratum",
+    "score_discharge",
+    "icd_version_for",
+    "icd_version_for_date",
 ]

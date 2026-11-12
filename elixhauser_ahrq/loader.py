@@ -4,16 +4,19 @@ loader.py - Load AHRQ Elixhauser reference data from Excel files
 This module reads the official AHRQ Elixhauser Comorbidity Software Refined
 for ICD-10-CM reference files and provides them as pandas DataFrames.
 
-CORRECTED v2026-1: Filters out the "End of Content" footer row that AHRQ
+Filters out the "End of Content" footer row that AHRQ
 appends to the DX_to_Comorb_Mapping and Comorbidity_Measures sheets.
-Without this filter the row counts report 4568 codes / 39 measures instead
-of the correct 4567 codes / 38 measures, and the footer row can propagate
-garbage into downstream lookups.
+For v2027.1 the correct counts are 4,573 codes and 38 measures.
+
+This module is for exploring AHRQ's reference workbook. Comorbidity assignment
+does not depend on it: ElixhauserMapper uses data compiled from AHRQ's SAS
+format program, and the test suite checks the two agree code by code.
 """
 
-import pandas as pd
 from pathlib import Path
 from typing import Tuple
+
+import pandas as pd
 
 
 # Footer sentinel appended by AHRQ to both sheets
@@ -29,11 +32,11 @@ class ElixhauserLoader:
 
         Args:
             reference_file_path: Path to the AHRQ CMR-Reference-File Excel file.
-                                 If None, uses the bundled v2026.1 file.
+                                 If None, uses the bundled v2027.1 file.
         """
         if reference_file_path is None:
             data_dir = Path(__file__).parent / "data"
-            reference_file_path = data_dir / "CMR-Reference-File-v2026-1.xlsx"
+            reference_file_path = data_dir / "CMR-Reference-File-v2027-1.xlsx"
 
         self.reference_file = Path(reference_file_path)
         if not self.reference_file.exists():
@@ -107,7 +110,7 @@ class ElixhauserLoader:
         return self._dx_mapping
 
     # ------------------------------------------------------------------
-    # Convenience accessors (unchanged from original)
+    # Convenience accessors
     # ------------------------------------------------------------------
 
     def get_comorbidity_categories(self) -> list:
@@ -151,7 +154,7 @@ class ElixhauserLoader:
         """
         Get summary statistics about the reference data.
 
-        Correct v2026-1 counts: 38 measures, 4567 ICD-10-CM codes.
+        Correct v2027.1 counts: 38 measures, 4,573 ICD-10-CM codes.
         """
         measures = self.comorbidity_measures
         mapping  = self.dx_mapping
@@ -179,11 +182,11 @@ def load_ahrq_data(reference_file_path: str = None) -> Tuple[pd.DataFrame, pd.Da
 if __name__ == "__main__":
     loader = ElixhauserLoader()
 
-    print("=== AHRQ Elixhauser Reference Data Summary (v2026-1 corrected) ===")
+    print("=== AHRQ Elixhauser Reference Data Summary (v2027.1) ===")
     stats = loader.get_summary_stats()
     for key, value in stats.items():
         print(f"{key}: {value}")
-    # Expected: num_comorbidity_measures=38, num_icd10_codes=4567
+    # Expected: num_comorbidity_measures=38, num_icd10_codes=4573
 
     print("\n=== First 5 Comorbidity Measures ===")
     print(loader.comorbidity_measures.head())

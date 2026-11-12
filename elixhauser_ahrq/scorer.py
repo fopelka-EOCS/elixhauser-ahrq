@@ -1,298 +1,156 @@
 """
-scorer.py - Calculate risk scores from Elixhauser comorbidity flags
+scorer.py - AHRQ Elixhauser Comorbidity Index (in-hospital mortality and
+30-day readmission), as computed by CMR_Index_Program_v2027-1.sas.
 
-This module converts binary comorbidity flags into numerical risk scores
-and assigns patients to risk strata (Low/Moderate/High).
+The weights are compiled from AHRQ's SAS index program (never hand-copied).
+Each index is the sum of the weights of the measures present. Measures that
+could not be assessed (None, because POA indicators were unavailable) are
+ignored, as SAS ``sum(of ...)`` ignores missing values; such an index is a
+PARTIAL index and must be labelled as such.
 
-CORRECTED v2026-1: Weights sourced directly from CMR_Index_Program_v2026-1.sas
-(mwXXX = mortality weights, rwXXX = readmission weights).
-Key structural note: the index operates on CMR_CBVD (a single combined
-cerebrovascular flag derived by the mapper), NOT on separate CBVD_POA /
-CBVD_SQLA flags.
+These are AHRQ's indices for in-hospital mortality and 30-day all-cause
+readmission. They are not the van Walraven (2009) score, and AHRQ publishes no
+risk tiers. ``stratify_risk`` therefore requires explicit, user-validated
+thresholds.
 """
 
-import pandas as pd
-import numpy as np
-from typing import Dict, List, Tuple
+import warnings
 from enum import Enum
+from typing import Dict, List, Optional, Tuple
+
+from ._data import ahrq_data
+
+_ALIASES = {"DRUG_ABUSE": "DRUG"}  # renamed by AHRQ in v2027.1
+
+
+def _weights(kind: str) -> Dict[str, int]:
+    return dict(ahrq_data()["weights"][kind])
 
 
 class RiskStratum(Enum):
-    """Patient risk stratification levels."""
+    """Illustrative strata; AHRQ defines none. Thresholds must be validated locally."""
     LOW = "Low"
     MODERATE = "Moderate"
     HIGH = "High"
 
 
+def _canonical(name: str) -> str:
+    key = str(name)
+    if key.upper().startswith("CMR_"):
+        key = key[4:]
+    if key in _ALIASES:
+        warnings.warn(f"'{key}' was renamed '{_ALIASES[key]}' by AHRQ in v2027.1; "
+                      "the old name will be removed in a future release.",
+                      DeprecationWarning, stacklevel=4)
+        key = _ALIASES[key]
+    return key
+
+
 class ElixhauserScorer:
-    """Calculate risk scores and stratify patients by risk level."""
+    """Compute AHRQ's Elixhauser mortality or readmission index (v2027.1 weights)."""
 
-    # ---------------------------------------------------------------
-    # AHRQ Mortality Index Weights (v2026-1)
-    # Source: CMR_Index_Program_v2026-1.sas  mwXXX variables
-    # ---------------------------------------------------------------
-    MORTALITY_WEIGHTS = {
-        'AIDS':          -4,
-        'ALCOHOL':       -1,
-        'ANEMDEF':       -3,
-        'AUTOIMMUNE':     0,
-        'BLDLOSS':       -4,
-        'CANCER_LEUK':    9,
-        'CANCER_LYMPH':   5,
-        'CANCER_METS':   22,
-        'CANCER_NSITU':   0,
-        'CANCER_SOLID':  10,
-        'CBVD':           5,   # combined CMR_CBVD — see mapper._derive_cbvd()
-        'COAG':          14,
-        'DEMENTIA':       5,
-        'DEPRESS':       -8,
-        'DIAB_CX':       -2,
-        'DIAB_UNCX':      0,
-        'DRUG_ABUSE':    -7,
-        'HF':            14,
-        'HTN_CX':         1,
-        'HTN_UNCX':       0,
-        'LIVER_MLD':      2,
-        'LIVER_SEV':     16,
-        'LUNG_CHRONIC':   2,
-        'NEURO_MOVT':    -1,
-        'NEURO_OTH':     22,
-        'NEURO_SEIZ':     2,
-        'OBESE':         -7,
-        'PARALYSIS':      4,
-        'PERIVASC':       3,
-        'PSYCHOSES':     -9,
-        'PULMCIRC':       4,
-        'RENLFL_MOD':     3,
-        'RENLFL_SEV':     7,
-        'THYROID_HYPO':  -3,
-        'THYROID_OTH':   -8,
-        'ULCER_PEPTIC':   0,
-        'VALVE':          0,
-        'WGHTLOSS':      13,
-    }
-
-    # ---------------------------------------------------------------
-    # AHRQ Readmission Index Weights (v2026-1)
-    # Source: CMR_Index_Program_v2026-1.sas  rwXXX variables
-    # ---------------------------------------------------------------
-    READMISSION_WEIGHTS = {
-        'AIDS':           5,
-        'ALCOHOL':        3,
-        'ANEMDEF':        5,
-        'AUTOIMMUNE':     2,
-        'BLDLOSS':        2,
-        'CANCER_LEUK':   10,
-        'CANCER_LYMPH':   7,
-        'CANCER_METS':   11,
-        'CANCER_NSITU':   0,
-        'CANCER_SOLID':   7,
-        'CBVD':           0,   # combined CMR_CBVD
-        'COAG':           3,
-        'DEMENTIA':       1,
-        'DEPRESS':        2,
-        'DIAB_CX':        4,
-        'DIAB_UNCX':      0,
-        'DRUG_ABUSE':     6,
-        'HF':             7,
-        'HTN_CX':         0,
-        'HTN_UNCX':       0,
-        'LIVER_MLD':      3,
-        'LIVER_SEV':     10,
-        'LUNG_CHRONIC':   4,
-        'NEURO_MOVT':     1,
-        'NEURO_OTH':      2,
-        'NEURO_SEIZ':     5,
-        'OBESE':         -2,
-        'PARALYSIS':      3,
-        'PERIVASC':       1,
-        'PSYCHOSES':      6,
-        'PULMCIRC':       3,
-        'RENLFL_MOD':     4,
-        'RENLFL_SEV':     8,
-        'THYROID_HYPO':   0,
-        'THYROID_OTH':    0,
-        'ULCER_PEPTIC':   2,
-        'VALVE':          0,
-        'WGHTLOSS':       6,
-    }
+    MORTALITY_WEIGHTS: Dict[str, int] = _weights("mortality")
+    READMISSION_WEIGHTS: Dict[str, int] = _weights("readmission")
 
     def __init__(self, index_type: str = "mortality"):
-        """
-        Initialize scorer with specified index type.
-
-        Args:
-            index_type: Either "mortality" or "readmission"
-        """
-        if index_type not in ["mortality", "readmission"]:
+        if index_type not in ("mortality", "readmission"):
             raise ValueError("index_type must be 'mortality' or 'readmission'")
-
         self.index_type = index_type
-        self.weights = (
-            self.MORTALITY_WEIGHTS if index_type == "mortality"
-            else self.READMISSION_WEIGHTS
-        )
+        self.weights = dict(self.MORTALITY_WEIGHTS if index_type == "mortality"
+                            else self.READMISSION_WEIGHTS)
 
-    def calculate_score(self, comorbidity_flags: Dict[str, bool]) -> float:
-        """
-        Calculate Elixhauser index score from comorbidity flags.
-
-        Args:
-            comorbidity_flags: Dictionary mapping category names to boolean flags.
-                               Must include 'CBVD' (the combined cerebrovascular flag
-                               produced by ElixhauserMapper, not the raw _POA/_SQLA flags).
-
-        Returns:
-            Numerical risk score (sum of weights for flagged categories)
-        """
+    def calculate_score(self, comorbidity_flags: Dict[str, Optional[bool]]) -> int:
+        """Sum of weights for measures flagged present (None = not assessable, ignored)."""
         score = 0
-        for category, is_present in comorbidity_flags.items():
-            if is_present and category in self.weights:
-                score += self.weights[category]
+        for name, present in comorbidity_flags.items():
+            key = _canonical(name)
+            if key in self.weights and present is not None and bool(present):
+                score += self.weights[key]
         return score
 
-    def calculate_comorbidity_count(self, comorbidity_flags: Dict[str, bool]) -> int:
-        """
-        Calculate simple count of comorbidities present.
+    def is_partial(self, comorbidity_flags: Dict[str, Optional[bool]]) -> bool:
+        """True if any of the 38 measures is missing or not assessable."""
+        seen = {_canonical(k): v for k, v in comorbidity_flags.items()}
+        return any(seen.get(m) is None for m in self.weights)
 
-        Args:
-            comorbidity_flags: Dictionary mapping category names to boolean flags
+    def calculate_comorbidity_count(self, comorbidity_flags: Dict[str, Optional[bool]]) -> int:
+        """Number of the 38 measures flagged present."""
+        return sum(1 for k, v in comorbidity_flags.items()
+                   if _canonical(k) in self.weights and v is not None and bool(v))
 
-        Returns:
-            Count of comorbidities (0-38)
-        """
-        return sum(1 for flag in comorbidity_flags.values() if flag)
+    def stratify_risk(self, score: float, thresholds: Tuple[float, float] = None,
+                      procedure_type: str = None) -> RiskStratum:
+        """Assign a stratum using (low_cutoff, high_cutoff) that YOU have validated.
 
-    def stratify_risk(
-        self,
-        score: float,
-        thresholds: Tuple[float, float] = None,
-        procedure_type: str = None
-    ) -> RiskStratum:
-        """
-        Assign patient to risk stratum based on score.
-
-        Args:
-            score: Elixhauser index score
-            thresholds: Optional (low_cutoff, high_cutoff) tuple.
-                        Thresholds must be calibrated per procedure/population.
-            procedure_type: Reserved for procedure-specific thresholds (future use)
-
-        Returns:
-            RiskStratum (LOW, MODERATE, or HIGH)
+        AHRQ publishes no risk tiers for these indices, so no default is provided.
         """
         if thresholds is None:
-            if self.index_type == "mortality":
-                thresholds = (5, 15)
-            else:
-                thresholds = (10, 20)
-
+            raise ValueError(
+                "AHRQ publishes no risk tiers for the Elixhauser indices. Pass thresholds="
+                "(low_cutoff, high_cutoff) validated for your population and outcome.")
         low_cutoff, high_cutoff = thresholds
-
         if score < low_cutoff:
             return RiskStratum.LOW
-        elif score < high_cutoff:
+        if score < high_cutoff:
             return RiskStratum.MODERATE
-        else:
-            return RiskStratum.HIGH
+        return RiskStratum.HIGH
 
-    def score_dataframe(
-        self,
-        df: pd.DataFrame,
-        flag_columns: List[str] = None
-    ) -> pd.DataFrame:
-        """
-        Add risk scores to a DataFrame of comorbidity flags.
-
-        Args:
-            df: DataFrame with comorbidity flag columns (output of ElixhauserMapper).
-                Must contain a 'CBVD' column (combined flag), not CBVD_POA / CBVD_SQLA.
-            flag_columns: Optional list of flag column names. If None, uses all
-                          columns that match scorer weight keys.
-
-        Returns:
-            DataFrame with added columns:
-                - elixhauser_score: Numerical risk score
-                - comorbidity_count: Count of comorbidities
-                - risk_stratum: Low/Moderate/High
-        """
-        result = df.copy()
+    def score_dataframe(self, df, flag_columns: List[str] = None,
+                        thresholds: Tuple[float, float] = None):
+        """Add ``elixhauser_score``, ``comorbidity_count`` and ``index_partial`` columns
+        (and ``risk_stratum`` only when validated ``thresholds`` are supplied)."""
+        import pandas as pd
 
         if flag_columns is None:
-            flag_columns = [col for col in df.columns if col in self.weights]
-
-        scores = []
-        counts = []
-        strata = []
-
-        for _, row in df.iterrows():
-            flags = {col: bool(row[col]) for col in flag_columns if col in row}
-            score = self.calculate_score(flags)
-            count = self.calculate_comorbidity_count(flags)
-            stratum = self.stratify_risk(score)
-            scores.append(score)
-            counts.append(count)
-            strata.append(stratum.value)
-
-        result['elixhauser_score'] = scores
-        result['comorbidity_count'] = counts
-        result['risk_stratum'] = strata
-
+            flag_columns = [c for c in df.columns if _canonical(c) in self.weights]
+        result = df.copy()
+        scores, counts, partial = [], [], []
+        for _, row in df[flag_columns].iterrows():
+            flags = {c: (None if pd.isna(row[c]) else bool(row[c])) for c in flag_columns}
+            scores.append(self.calculate_score(flags))
+            counts.append(self.calculate_comorbidity_count(flags))
+            partial.append(self.is_partial(flags))
+        result["elixhauser_score"] = scores
+        result["comorbidity_count"] = counts
+        result["index_partial"] = partial
+        if thresholds is not None:
+            result["risk_stratum"] = [self.stratify_risk(s, thresholds).value for s in scores]
         return result
 
-    def get_score_distribution_summary(self, df: pd.DataFrame) -> pd.DataFrame:
-        """
-        Get summary statistics of risk scores by stratum.
-
-        Args:
-            df: DataFrame with 'elixhauser_score' and 'risk_stratum' columns
-
-        Returns:
-            DataFrame with summary statistics by risk stratum
-        """
-        summary = df.groupby('risk_stratum')['elixhauser_score'].agg(
-            count='count',
-            mean_score='mean',
-            median_score='median',
-            min_score='min',
-            max_score='max',
-            std_score='std'
-        ).reset_index()
-        summary['percentage'] = 100 * summary['count'] / summary['count'].sum()
+    def get_score_distribution_summary(self, df):
+        """Summary statistics of ``elixhauser_score`` (by ``risk_stratum`` if present)."""
+        if "risk_stratum" in df.columns:
+            g = df.groupby("risk_stratum")["elixhauser_score"]
+        else:
+            g = df.assign(_all="all").groupby("_all")["elixhauser_score"]
+        summary = g.agg(count="count", mean_score="mean", median_score="median",
+                        min_score="min", max_score="max", std_score="std").reset_index()
+        summary["percentage"] = 100 * summary["count"] / summary["count"].sum()
         return summary
 
 
-if __name__ == "__main__":
-    print("=== Elixhauser Scorer Demo (v2026-1 corrected weights) ===\n")
+def score_discharge(principal_dx, secondary_dx, secondary_poa=None, **kwargs) -> dict:
+    """One-call scoring of a discharge: flags, both AHRQ indices, and provenance.
 
-    scorer = ElixhauserScorer(index_type="mortality")
+    Accepts the same arguments as :func:`elixhauser_ahrq.assign_comorbidities`.
+    """
+    from . import __version__
+    from .mapper import assign_comorbidities
 
-    # Note: CBVD is the combined flag, not CBVD_POA or CBVD_SQLA
-    patient_flags = {
-        'DIAB_CX': True,
-        'HF': True,
-        'RENLFL_MOD': True,
-        'HTN_CX': False,
-        'CANCER_METS': False,
-        'CBVD': False,
+    res = assign_comorbidities(principal_dx, secondary_dx, secondary_poa, **kwargs)
+    mort = ElixhauserScorer("mortality")
+    readm = ElixhauserScorer("readmission")
+    return {
+        "flags": res.flags,
+        "present": res.present,
+        "not_assessable": res.not_assessable,
+        "mortality_index": mort.calculate_score(res.flags),
+        "readmission_index": readm.calculate_score(res.flags),
+        "partial": res.partial,
+        "icd_version": res.icd_version,
+        "poa_available": res.poa_available,
+        "principal_dx": res.principal_dx,
+        "trace": res.trace,
+        "ahrq_version": res.cmr_version,
+        "package_version": __version__,
     }
-
-    score = scorer.calculate_score(patient_flags)
-    count = scorer.calculate_comorbidity_count(patient_flags)
-    stratum = scorer.stratify_risk(score)
-
-    print("Example Patient:")
-    print(f"Comorbidities: {[k for k, v in patient_flags.items() if v]}")
-    print(f"Score: {score}")
-    print(f"Count: {count}")
-    print(f"Risk Stratum: {stratum.value}")
-
-    print("\nComparison: Mortality vs Readmission Indices")
-    print(f"{'Category':<20} {'Mortality Weight':>20} {'Readmission Weight':>20}")
-    print("-" * 65)
-
-    categories = ['HF', 'CANCER_METS', 'RENLFL_SEV', 'ALCOHOL', 'DEPRESS', 'AIDS', 'WGHTLOSS']
-    for cat in categories:
-        mort_wt = ElixhauserScorer.MORTALITY_WEIGHTS.get(cat, 0)
-        readm_wt = ElixhauserScorer.READMISSION_WEIGHTS.get(cat, 0)
-        print(f"{cat:<20} {mort_wt:>20} {readm_wt:>20}")
