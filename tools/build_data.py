@@ -162,14 +162,20 @@ def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--check", action="store_true")
     args = ap.parse_args()
-    blob = serialize(build())
+    fresh = build()
     if args.check:
-        current = OUT.read_bytes() if OUT.exists() else b""
-        if current != blob:
-            print(f"STALE: {OUT} does not match a fresh build from {SAS_DIR}")
+        # Compare content, not gzip bytes: zlib builds may compress identical data differently.
+        current = json.loads(gzip.decompress(OUT.read_bytes())) if OUT.exists() else {}
+        if current != fresh:
+            differing = sorted(k for k in set(current) | set(fresh) if current.get(k) != fresh.get(k))
+            print(f"STALE: {OUT} does not match a fresh build from {SAS_DIR}; differing sections: {differing}")
+            if "sources" in differing:
+                print("  bundled source hashes:", current.get("sources"))
+                print("  fresh source hashes:  ", fresh.get("sources"))
             return 1
         print("bundled data matches AHRQ SAS programs")
         return 0
+    blob = serialize(fresh)
     OUT.parent.mkdir(parents=True, exist_ok=True)
     OUT.write_bytes(blob)
     print(f"wrote {OUT} ({len(blob):,} bytes)")
