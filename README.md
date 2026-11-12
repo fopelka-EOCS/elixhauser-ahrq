@@ -16,9 +16,18 @@ It assigns AHRQ's 38 Elixhauser comorbidity measures from the secondary diagnose
 >   - the cerebrovascular "not present on admission" rule could not fire.
 > - **Calculator.** The former Hugging Face calculator treated the first code entered as a comorbidity and gave order-dependent results.
 >
-> All of these are corrected in 2027.1.0. See [CHANGELOG.md](CHANGELOG.md). Results produced with earlier versions should be re-run.
+> All of these are corrected in 2027.1.0. Results produced with earlier versions should be re-run.
+>
+> **Read the advisory:** [Advisory EOCS-ELX-2026-01](https://github.com/fopelka-EOCS/elixhauser-ahrq/blob/main/docs/ADVISORY-EOCS-ELX-2026-01.md). Details are in the [CHANGELOG](https://github.com/fopelka-EOCS/elixhauser-ahrq/blob/main/CHANGELOG.md).
 
 This is an independent implementation. It is not produced, reviewed or endorsed by AHRQ.
+
+## Resources
+
+- **Package:** https://pypi.org/project/elixhauser-ahrq/
+- **Source and issues:** https://github.com/fopelka-EOCS/elixhauser-ahrq
+- **Calculator:** https://huggingface.co/spaces/fopelka/elixhauser-risk-calculator
+- **Dataset:** https://huggingface.co/datasets/EOCS-LTD/elixhauser-icd10-mapping
 
 ## Installation
 
@@ -110,7 +119,9 @@ On every build:
 - its mapping is checked code by code against AHRQ's reference workbook;
 - its logic is checked on rule cases and on 40,000 randomized synthetic discharges against an independent transliteration of AHRQ's SAS mapping and index programs.
 
-AHRQ does not publish reference output files. This release has **not** been compared with output from AHRQ's SAS software itself, or with real-world data. See [docs/VALIDATION.md](docs/VALIDATION.md) for exactly what has and has not been tested.
+AHRQ does not publish reference output files. **Pending:** comparison with output from AHRQ's executed SAS software (test tier T7) has not been done. No SAS environment is available to the maintainers; a run-ready kit is in `validation/`.
+
+The package has **not** been comprehensively validated, and it has not been tested on real-world data. See [docs/VALIDATION.md](https://github.com/fopelka-EOCS/elixhauser-ahrq/blob/main/docs/VALIDATION.md) for exactly what has and has not been tested.
 
 ## Use with PACES and other episode methods
 
@@ -127,7 +138,7 @@ This package implements AHRQ's method only. For episode-based work, callers must
 
 ## Citation
 
-See [CITATION.cff](CITATION.cff). Please also cite AHRQ's software:
+See [CITATION.cff](https://github.com/fopelka-EOCS/elixhauser-ahrq/blob/main/CITATION.cff). Please also cite AHRQ's software:
 
 > Agency for Healthcare Research and Quality. Elixhauser Comorbidity Software Refined for ICD-10-CM, v2027.1. Healthcare Cost and Utilization Project (HCUP). https://hcup-us.ahrq.gov/toolssoftware/comorbidityicd10/comorbidity_icd10.jsp
 

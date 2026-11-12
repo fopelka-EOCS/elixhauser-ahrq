@@ -17,7 +17,7 @@ size_categories:
 
 # AHRQ Elixhauser Comorbidity Software Refined v2027.1: ICD-10-CM mapping
 
-> **Correction notice.** Earlier versions of this dataset were labelled v2025.1. Their `van_walraven_mortality_weight` column did **not** contain AHRQ's index weights and must not be used. They also described the package as "CDC-reviewed", which was inaccurate. This release replaces those files with AHRQ v2027.1 content. If you used the old weight column, re-run with the weights below or with the `elixhauser-ahrq` package {PACKAGE_VERSION}.
+> **Correction notice.** Earlier versions of this dataset were labelled v2025.1. Their `van_walraven_mortality_weight` column did **not** contain AHRQ's index weights and must not be used. They also described the package as "CDC-reviewed", which was inaccurate. This release replaces those files with AHRQ v2027.1 content. If you used the old weight column, re-run with the weights below or with the `elixhauser-ahrq` package {PACKAGE_VERSION}. See [Advisory EOCS-ELX-2026-01](https://github.com/fopelka-EOCS/elixhauser-ahrq/blob/main/docs/ADVISORY-EOCS-ELX-2026-01.md).
 
 This dataset is a machine-readable copy of AHRQ HCUP's **Elixhauser Comorbidity Software Refined for ICD-10-CM, v2027.1** (FY2027; valid for ICD-10-CM codes from October 2015 through September 2027). It contains:
 - the mapping from diagnosis codes to comorbidity measures;

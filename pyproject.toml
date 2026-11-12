@@ -58,6 +58,9 @@ Documentation = "https://github.com/fopelka-EOCS/elixhauser-ahrq#readme"
 Repository = "https://github.com/fopelka-EOCS/elixhauser-ahrq"
 "Bug Tracker" = "https://github.com/fopelka-EOCS/elixhauser-ahrq/issues"
 "EOCS Analytics" = "https://www.eocs.ltd"
+"Calculator" = "https://huggingface.co/spaces/fopelka/elixhauser-risk-calculator"
+"Dataset" = "https://huggingface.co/datasets/EOCS-LTD/elixhauser-icd10-mapping"
+"Advisory" = "https://github.com/fopelka-EOCS/elixhauser-ahrq/blob/main/docs/ADVISORY-EOCS-ELX-2026-01.md"
 Changelog = "https://github.com/fopelka-EOCS/elixhauser-ahrq/blob/main/CHANGELOG.md"
 
 [tool.setuptools.packages.find]
