@@ -1,11 +1,23 @@
 # Advisory EOCS-ELX-2026-01: elixhauser-ahrq: errors in versions before 2027.1.0, and withdrawal of the former demonstration app
 
-*Issued: 2026-11-12.*
+*Issued: 2026-11-12. Corrected: 2026-11-12. The first version of this advisory stated that the dataset correction was published and that the 2026 PyPI releases were yanked; neither had yet happened.*
+
+## Current status (2026-11-12)
+
+| Item | Status |
+|---|---|
+| elixhauser-ahrq 2027.1.0 (AHRQ v2027.1) | **Published** on PyPI |
+| Hugging Face dataset correction | Prepared; **not yet published**. Until it is, do not use the dataset's `van_walraven_mortality_weight` column |
+| Calculator (Hugging Face Space) | Rebuilt; **remains Private**. The former app's results should not be used |
+| PyPI releases 2026.1.0–2026.1.3 | **Not yet yanked.** Do not use them; upgrade to 2027.1.0 |
+| Comparison with executed AHRQ SAS output (T7) | **Pending** |
+
+This table will be updated as each item is completed.
 
 *Applies to:*
 - *elixhauser-ahrq 2026.1.0–2026.1.3 (PyPI), and GitHub versions before 2027.1.0;*
 - *the former Hugging Face Space `fopelka/elixhauser-risk-calculator`;*
-- *the Hugging Face dataset `EOCS-LTD/elixhauser-icd10-mapping` before 2026-11-12.*
+- *the Hugging Face dataset `EOCS-LTD/elixhauser-icd10-mapping` (current public version).*
 
 *Fixed in: elixhauser-ahrq 2027.1.0, which implements AHRQ Elixhauser Comorbidity Software Refined for ICD-10-CM v2027.1.*
 
@@ -13,7 +25,7 @@
 
 A review against AHRQ's official Elixhauser Comorbidity Software Refined for ICD-10-CM (SAS programs v2026.1 and v2027.1) found that earlier versions of this package differed from AHRQ's logic in four ways. It also found errors in the demonstration app, the dataset and the documentation. Version 2027.1.0 corrects all of them and updates the package to AHRQ's FY2027 release.
 
-**Anyone who used an earlier version should re-run the analysis with 2027.1.0.** PyPI releases 2026.1.0–2026.1.3 have been yanked. They remain available by exact version pin, so earlier analyses can be reproduced.
+**Anyone who used an earlier version should re-run the analysis with 2027.1.0.** We intend to yank PyPI releases 2026.1.0–2026.1.3. Yanked releases remain installable by exact version pin, so earlier analyses can still be reproduced.
 
 ## 1. Logic differences in PyPI releases 2026.1.0–2026.1.3
 
@@ -38,11 +50,11 @@ The former Hugging Face app supplied no POA information and treated the first co
 - the 18 measures that require POA (including heart failure, renal failure and coagulopathy) were never counted;
 - scores depended on the order in which codes were entered.
 
-Do not use its earlier results. The rebuilt calculator for 2027.1.0 asks for the principal diagnosis and POA explicitly.
+Do not use its earlier results. A rebuilt calculator for 2027.1.0, which asks for the principal diagnosis and POA explicitly, is not yet public.
 
 ## 4. Dataset
 
-Before 2026-11-12, `EOCS-LTD/elixhauser-icd10-mapping` contained AHRQ's v2025.1 code mapping and a `van_walraven_mortality_weight` column. That column was not AHRQ's index weight set and should not be used for scoring. The dataset now carries AHRQ v2027.1 content and AHRQ's weights.
+`EOCS-LTD/elixhauser-icd10-mapping` currently contains AHRQ's v2025.1 code mapping and a `van_walraven_mortality_weight` column. That column is not AHRQ's index weight set and should not be used for scoring. A corrected version with AHRQ v2027.1 content and AHRQ's weights is prepared and will replace it.
 
 ## 5. Documentation
 

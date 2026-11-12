@@ -6,7 +6,7 @@ Versions follow `YYYY.R.P`: AHRQ fiscal year, AHRQ release, and the patch of thi
 
 ## [2027.1.0] — 2026-11-12
 
-See [Advisory EOCS-ELX-2026-01](docs/ADVISORY-EOCS-ELX-2026-01.md). PyPI releases 2026.1.0–2026.1.3 are yanked; they can still be installed by exact version pin.
+See [Advisory EOCS-ELX-2026-01](docs/ADVISORY-EOCS-ELX-2026-01.md). PyPI releases 2026.1.0–2026.1.3 are superseded and should not be used (yanking is pending).
 
 **AHRQ source:** Elixhauser Comorbidity Software Refined for ICD-10-CM, v2027.1 (FY2027). It covers ICD-10-CM codes from October 2015 through September 2027. AHRQ's SAS programs, reference file, change log and user guide are in `SAS-Programs/`.
 
