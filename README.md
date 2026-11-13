@@ -29,6 +29,110 @@ This is an independent implementation. It is not produced, reviewed or endorsed 
 - **Calculator:** https://huggingface.co/spaces/fopelka/elixhauser-risk-calculator
 - **Dataset:** https://huggingface.co/datasets/EOCS-LTD/elixhauser-icd10-mapping
 
+## How EOCS uses Elixhauser: quality-risk stratification of episodes
+
+Episodes of Care Solutions (EOCS) maintains this package. EOCS's primary use of it differs from AHRQ's. **EOCS's proposed method uses an Elixhauser-derived score to group patients within an episode of care into low-, moderate- and high-risk groups by baseline clinical risk**, and then compares quality, cost and patient outcomes within like groups. This section explains how that use differs from AHRQ's, and where this package's role begins and ends.
+
+### Where the Elixhauser measures come from
+
+- **The original measures (1998).** Elixhauser and colleagues developed 30 comorbidity measures for administrative inpatient data. They studied several outcomes: length of stay, hospital charges and in-hospital mortality. Comorbidity effects on these outcomes differed across patient groups, so **the authors cautioned against reducing the measures to a single index, which can lose information** (Elixhauser et al., 1998).
+- **AHRQ's indices (2017).** AHRQ later derived two weighted indices from the measures: one for **in-hospital mortality** and one for **30-day all-cause readmission** (Moore et al., 2017). The measures remain the foundation of AHRQ's software; the current refined release defines 38.
+- **Measures versus indices.** The measures record which comorbidities are present. Each index is a weighted sum of those measures, calibrated to one outcome. Its weights are not established for any other outcome. This package reproduces AHRQ's measures and both indices exactly. AHRQ publishes no risk groups or cut-points.
+
+EOCS's use returns to the measures' original, broader purpose: describing comorbidity burden across several outcomes. EOCS applies that purpose to episodes of care. It builds on AHRQ's work and does not depart from it: this package applies AHRQ's measures and indices unchanged.
+
+### What EOCS does with it
+
+The package is one step in a separate EOCS episode method:
+
+1. **Episode attribution: the PACES grouper.** The PACES grouper defines each episode: its trigger, and its look-back and look-forward windows. It attributes services, cost, sequelae and quality events to the episode. This is the *observed* side. The grouper's attribution is independent of Elixhauser.
+2. **Eligible baseline conditions only.** Only conditions that qualify as baseline risk at the episode's reference point are passed to this package. These are conditions documented before the reference point, and conditions on the index claim that are supported by evidence that they already existed. **Complications and other conditions that newly develop during the episode are never treated as baseline risk.** If they were, a complication would raise the patient's own risk group and hide itself.
+3. **Elixhauser measures and score, then risk group.** This package returns AHRQ's full measure set and its index scores for those baseline conditions. Under EOCS's proposed method, each episode is then placed in a low-, moderate- or high-risk group from an Elixhauser-derived score and cut-points specific to the episode type. **The score choice and the cut-points are EOCS's, not AHRQ's. Neither has yet been selected or validated, and neither is part of this package.**
+4. **Evaluation within each risk group.** For each group, EOCS reports:
+   - **major-sequelae incidence**;
+   - the **rate of episodes with zero major complications**;
+   - **cost observed-to-expected (O:E)**. Expected cost comes from a separate, independent HCC or CDPS cost-risk model. **The Elixhauser score never enters a cost calculation;**
+   - **patient goal attainment**, an additional outcome, evaluated where Goal Attainment Scaling data are available. It is measured against goals the patient has stated. This package does not calculate it, and the Elixhauser score has not been validated to predict it.
+
+```mermaid
+flowchart TB
+    subgraph DATA["Inputs"]
+        CLM["Claims and encounter data<br/>diagnoses, dates, POA where present"]
+        GOAL["Goal Attainment Scaling data<br/>patient-stated goals, where available"]
+    end
+
+    subgraph ATTR["1 · Episode attribution: PACES grouper"]
+        EPI["Episode definition<br/>trigger, look-back and look-forward windows"]
+        OBS["Observed outcomes<br/>attributed cost, sequelae, complications, quality events"]
+    end
+
+    subgraph STRAT["2–3 · Quality-risk stratification: EOCS"]
+        BASE["Baseline determination<br/>eligible baseline conditions only"]
+        PKG["elixhauser-ahrq · this package, unmodified<br/>38 AHRQ comorbidity measures<br/>+ AHRQ weighted index scores"]
+        GRP{{"Proposed risk group: low · moderate · high<br/>one Elixhauser-derived score, EOCS cut-points<br/>score not yet selected · not yet validated"}}
+    end
+
+    subgraph COST["Cost risk adjustment: independent of Elixhauser"]
+        EXP["HCC or CDPS model<br/>expected cost"]
+    end
+
+    subgraph REP["4 · Integrated reporting within each risk group"]
+        OE["Cost O:E"]
+        SEQ["Major-sequelae incidence"]
+        ZMC["Zero-major-complication rate"]
+        GA["Patient goal attainment<br/>additional outcome, where GAS data exist"]
+    end
+
+    CLM --> EPI
+    EPI --> OBS
+    CLM -->|"conditions documented<br/>before the reference point"| BASE
+    EPI -->|"reference point"| BASE
+    OBS -.-x|"newly developed conditions:<br/>excluded from baseline"| BASE
+    BASE --> PKG
+    PKG --> GRP
+    GRP ==>|"stratifies"| REP
+    CLM --> EXP
+    OBS -->|"observed cost"| OE
+    EXP -->|"expected cost"| OE
+    OBS --> SEQ
+    OBS --> ZMC
+    GOAL -.->|"where available"| GA
+
+    classDef pkg fill:#0b5cad,stroke:#0b5cad,color:#ffffff,font-weight:bold
+    classDef eocs fill:#eef3f8,stroke:#4a6a8a,color:#1b2733
+    classDef provisional fill:#fff6e0,stroke:#b07800,color:#3d2a00,stroke-dasharray:6 4
+    classDef out fill:#eef7ee,stroke:#3c7a3c,color:#1b331b
+    class PKG pkg
+    class BASE,EPI,OBS,EXP eocs
+    class GRP provisional
+    class OE,SEQ,ZMC,GA out
+```
+
+*Solid blue: this package. Dashed amber: EOCS's proposed risk groups, not yet validated. The dotted crossed line marks the rule that conditions developing during the episode never become baseline risk. The dotted goal-attainment line marks an outcome evaluated only where Goal Attainment Scaling data exist.*
+
+### What this package does and does not do
+
+- **It does:** apply AHRQ's measures and indices, unmodified, to whatever diagnoses it is given.
+- **It does not:** define episodes, decide which diagnoses count as baseline, assign risk groups, compute expected cost, or measure outcomes. Those belong to the calling method. For any episode-based use, pass **eligible baseline diagnoses only**.
+
+### Scientific status: EOCS risk groups are not yet validated
+
+- **The application is EOCS's own.** AHRQ developed its indices for in-hospital mortality and 30-day readmission. AHRQ has not validated them for complications, sequelae, cost performance or goal attainment. EOCS uses the score to *group* episodes, not to predict any one patient's outcome. Whether the groups actually separate those outcomes is an empirical question.
+- **EOCS stratification inherits the 1998 caution.** Each EOCS risk group is assigned from a single summary score. That is the reduction the original authors warned can lose information, so validation must be specific to the episode type and to the outcome.
+- **Which score to use is a research question, not a settled choice.** Future EOCS research will compare:
+  - AHRQ's mortality index;
+  - AHRQ's readmission index;
+  - an unweighted count of the comorbidity measures;
+  - potentially, episode-refined models.
+
+  None of these has been selected or validated for EOCS risk grouping. An episode-refined model would be EOCS's own score, not an AHRQ Elixhauser index, and would be labelled as such.
+- **EOCS cut-points are not AHRQ standards, and none is yet validated.** Each must be validated for each episode type and each outcome, on held-out data, before it is reported as validated. Validation covers:
+  - discrimination for the outcome;
+  - a consistent gradient from low to moderate to high;
+  - adequate group sizes;
+  - stability across years and payer types.
+- **Until then, EOCS risk groupings are provisional.** Results stratified by them should be described as such.
+
 ## Installation
 
 ```bash
@@ -122,10 +226,6 @@ On every build:
 AHRQ does not publish reference output files. **Pending:** comparison with output from AHRQ's executed SAS software (test tier T7) has not been done. No SAS environment is available to the maintainers; a run-ready kit is in `validation/`.
 
 The package has **not** been comprehensively validated, and it has not been tested on real-world data. See [docs/VALIDATION.md](https://github.com/fopelka-EOCS/elixhauser-ahrq/blob/main/docs/VALIDATION.md) for exactly what has and has not been tested.
-
-## Use with PACES and other episode methods
-
-This package implements AHRQ's method only. For episode-based work, callers must decide which diagnoses represent baseline risk; for EOCS methods, pass baseline-window diagnoses only. Any such window, and any risk tiers, belong to the calling method, not to this package. EOCS's quality-risk stratification methodology is separate and is not part of this package.
 
 ## Versioning
 
